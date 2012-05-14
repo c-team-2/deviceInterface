@@ -1,0 +1,24 @@
+<OpenNI>
+	<Licenses>
+		<!-- Add application-specific licenses here 
+		<License vendor="vendor" key="key"/>
+		-->
+	</Licenses>
+	<Log writeToConsole="true" writeToFile="false">
+		<!-- 0 - Verbose, 1 - Info, 2 - Warning, 3 - Error (default) -->
+		<LogLevel value="0"/>
+		<Masks>
+			<Mask name="ALL" on="true"/>
+		</Masks>
+		<Dumps>
+		</Dumps>
+	</Log>
+	<ProductionNodes>
+		<!-- Uncomment following line, in order to run from a recording -->
+		<Recording file="skeletonrec.oni" />
+		
+	
+		<!-- Set global mirror -->
+		<GlobalMirror on="true"/>
+	</ProductionNodes>
+</OpenNI>
