@@ -1,3 +1,4 @@
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 import org.OpenNI.*;
@@ -20,6 +21,7 @@ public class uniOpenNIDevice {
     long depthTimestamp;
     FieldOfView depthFOV;
     int depthFPS;
+    DepthMetaData depthMD;
     
     SceneMap scene;	//mask for which pixels are associated to a user?
     int numUsers;
@@ -27,7 +29,7 @@ public class uniOpenNIDevice {
     HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> joints; //Integer is the User number
     // End relevant data
     
-    private final String SAMPLE_XML_FILE = "KinectConfig.xml";
+    private final String SAMPLE_XML_FILE = "SamplesConfig.xml";
     
 	public uniOpenNIDevice() {
 		try {
@@ -74,12 +76,84 @@ public class uniOpenNIDevice {
 		}
 	}
 	
+	long uniGetChannelPacketSize(int elementsPerTuple, uniElementDescriptor[] elementDescriptors, 
+			byte[] nullTerminatedName, long numTuples) {
+		// Construct size (in bits) of a tuple
+		long tupleSizeInBits = 0;
+		for (int i = 0; i < elementsPerTuple; ++i) {
+			uniElementDescriptor descriptor = elementDescriptors[i];
+			int elementSizeInBits = descriptor.size * (descriptor.sizeUnitBytes << 3);
+			tupleSizeInBits += elementSizeInBits;
+		}
+		
+		// Construct buffer size (in bytes)
+		long channelSizeInBits = tupleSizeInBits * numTuples;
+		long channelSize = channelSizeInBits >> 3;
+		channelSize += ((channelSizeInBits & 7) > 0 ? 1 : 0); // Add an extra byte if data doesn't end on byte boundary
+		channelSize += (8 + 8 + 2 + elementsPerTuple + nullTerminatedName.length); // Add size of header
+		
+		return channelSize;
+	}
+	
+	boolean uniPackChannelHeader(byte[] nullTerminatedName, double frequency, 
+			long numTuples, short elementsPerTuple, uniElementDescriptor elementDescriptors[],
+			ByteBuffer sensorPacket) throws Exception {
+		
+		sensorPacket.putLong(numTuples);
+		sensorPacket.putDouble(frequency);
+		sensorPacket.putShort(elementsPerTuple);
+		for(int i = 0; i < elementsPerTuple; ++i) {
+			sensorPacket.put(elementDescriptors[i].getByte());
+		}
+		sensorPacket.put(nullTerminatedName);
+		
+		return true;
+	}
+	
+	boolean uniPackSensorHeader(byte uniVersion, short vendorID, short productID, 
+			short numChannels, long time, double frequency, ByteBuffer sensorPacket) {
+		sensorPacket.put(uniVersion);
+		sensorPacket.put((byte)0x00);
+		sensorPacket.putShort(vendorID);
+		sensorPacket.putShort(productID);
+		sensorPacket.putShort(numChannels);
+		sensorPacket.putLong(time);
+		sensorPacket.putDouble(frequency);
+		return true;
+	}
+	
+	ByteBuffer uniCreateSensorPacket() throws Exception {
+		// Construct packet size
+		long capacity = 24;
+		
+		// Depth channel
+		String name = "DEPTH\0";
+		byte[] depthName = name.getBytes();
+		double depthFrequency = 1.0d/(double)depthMD.getFPS();
+		uniElementDescriptor[] depthDescriptors = new uniElementDescriptor[1];
+		depthDescriptors[0] = new uniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
+		long depthNumTuples = depth.getXRes() * depth.getYRes();
+		long depthChannelSize = uniGetChannelPacketSize(1, depthDescriptors, depthName, depthNumTuples);
+		
+		capacity += depthChannelSize;
+		ByteBuffer sensorPacket = ByteBuffer.allocate((int)capacity);
+		short numChannels = 1;
+		
+		uniPackSensorHeader((byte) 0, (short) 0x045e, (short) 0x02ae, numChannels, 
+				System.currentTimeMillis(), 1.0d/30.0d, sensorPacket);
+		
+		uniPackChannelHeader(depthName, depthFrequency,	depthNumTuples, (short) 1, 
+				depthDescriptors, sensorPacket);
+		
+		return sensorPacket;
+	}
+	
 	void updateDepth()
     {
 		try {
 			context.waitAnyUpdateAll();
 
-            DepthMetaData depthMD = depthGen.getMetaData();
+            depthMD = depthGen.getMetaData();
             SceneMetaData sceneMD = userGen.getUserPixels(0);
             
             depthFPS = depthMD.getFPS();
