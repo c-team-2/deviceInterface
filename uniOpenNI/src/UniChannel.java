@@ -2,8 +2,8 @@ import java.nio.ByteBuffer;
 
 
 public class UniChannel {
-	ByteBuffer data;
-	UniChannelHeader header;
+	private ByteBuffer data;
+	private UniChannelHeader header;
 	
 	public UniChannel(ByteBuffer sensorPacket) {		
 		header = new UniChannelHeader(sensorPacket);
@@ -21,4 +21,7 @@ public class UniChannel {
 		sensorPacket.put(data);
 		return true;
 	}
+	
+	ByteBuffer getData() { return data; }
+	UniChannelHeader getHeader() { return header; }
 }

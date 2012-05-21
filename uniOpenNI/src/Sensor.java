@@ -23,11 +23,9 @@ public class Sensor {
 		int numChannels = sensorHeader.numChannels;
 		for (int channelCount = 0; channelCount < numChannels; ++channelCount)
 		{
-			// Parse packed data into byte-aligned elements
 			UniChannel uniChannel = new UniChannel(sensorPacket);
-			
-			// 
 			Channel channel = new Channel(uniChannel);
+			snapshot.addChannel(uniChannel.getHeader().getName(), channel);
 		}
 		
 		return snapshot;
