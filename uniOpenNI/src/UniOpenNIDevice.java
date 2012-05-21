@@ -122,7 +122,7 @@ public class UniOpenNIDevice extends UniDevice {
 		return true;
 	}
 	
-	ByteBuffer uniCreateSensorPacket() throws Exception {
+	ByteBuffer getSensorPacket() {
 		// Construct packet size
 		long capacity = 24;
 		
@@ -142,8 +142,13 @@ public class UniOpenNIDevice extends UniDevice {
 		uniPackSensorHeader((byte) 0, (short) 0x045e, (short) 0x02ae, numChannels, 
 				System.currentTimeMillis(), 1.0d/30.0d, sensorPacket);
 		
-		uniPackChannelHeader(depthName, depthFrequency,	depthNumTuples, (short) 1, 
-				depthDescriptors, sensorPacket);
+		try {
+			uniPackChannelHeader(depthName, depthFrequency,	depthNumTuples, (short) 1, 
+					depthDescriptors, sensorPacket);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return sensorPacket;
 	}

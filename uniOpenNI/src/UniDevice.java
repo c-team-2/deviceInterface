@@ -1,4 +1,7 @@
+import java.nio.ByteBuffer;
 
-public class UniDevice {
+
+public abstract class UniDevice {
+	abstract ByteBuffer getSensorPacket();
 
 }
