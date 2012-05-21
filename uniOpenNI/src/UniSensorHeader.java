@@ -28,7 +28,7 @@ class UniSensorHeader {
 			this.frequency = frequency;
 		}
 		
-		boolean PackSensorHeaderIntoByteBuffer(ByteBuffer sensorPacket) {
+		boolean PackIntoByteBuffer(ByteBuffer sensorPacket) {
 			sensorPacket.put(version);
 			sensorPacket.put((byte)0x00);
 			sensorPacket.putShort(vendorID);
