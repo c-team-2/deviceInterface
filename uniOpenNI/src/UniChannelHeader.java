@@ -45,13 +45,13 @@ public class UniChannelHeader {
 		this.name = name;
 	}
 	
-	boolean PackIntoByteBuffer(ByteBuffer sensorPacket)
+	boolean packIntoByteBuffer(ByteBuffer sensorPacket)
 	{
 		sensorPacket.putLong(numTuples);
 		sensorPacket.putDouble(frequency);
 		sensorPacket.putShort(elementsPerTuple);
 		for(int i = 0; i < elementsPerTuple; ++i) {
-			sensorPacket.put(elementDescriptors[i].getByte());
+			sensorPacket.put(elementDescriptors[i].getDescriptor());
 		}
 		
 		// Pack name
