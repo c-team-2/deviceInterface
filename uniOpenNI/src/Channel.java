@@ -1,12 +1,18 @@
 import java.nio.ByteBuffer;
-
+/**
+ * Representation of a Channel data after parsing a sensor packet.
+ * @author greg
+ *
+ */
 public class Channel {
-	private ByteBuffer data;
-	private int[] dimensions;
-	private int[] dimProducts;
-	private int tupleSize;
-	private long numTuples;
-	private ElementMetaData[] elementMetaData;
+	private ByteBuffer data;	// The parsed data, tuple elements are byte-aligned
+	private int[] dimensions;	// The dimensions of how to interpret data. ex: [640; 480] for VGA
+	private int[] dimProducts;	/* Used for quickly calculating index. 
+									dimProducts[dimProducts.length-1] = tupleSize
+									dimProducts[i] = dimProducts[i+1] * dimensions[i+1] */
+	private int tupleSize;		// size of tuple in bytes
+	private long numTuples;		// number of tuples in Channel
+	private ElementMetaData[] elementMetaData;	// metadata used when accessing elements in a tuple
 	
 	Channel(ByteBuffer data, int[] dimensions, ElementMetaData[] elementMD, long numTuples) {
 		this.elementMetaData = elementMD;
@@ -26,12 +32,14 @@ public class Channel {
 		}
 	}
 	
-	/** Get tuple using integer dimensions
-	 * 
+	/** 
+	 * Get tuple using integer dimensions.
 	 * @param indices of tuple, 0-indexed. e.g. 639,479 for last pixel in a VGA image
 	 * @return Tuple
+	 * @throws IllegalArgumentException if the dimensionality is higher than this Channel's dimensionality
+	 * 	or if the calculated index is too high
 	 */
-	Tuple getTuple(int... indices) {
+	Tuple getTuple(int... indices) throws IllegalArgumentException {
 		// TODO: Decide whether to check bounds of each dimension or just final index
 		if (indices.length > dimensions.length)
 		{
