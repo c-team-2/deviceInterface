@@ -82,7 +82,7 @@ public class UniOpenNIDevice extends UniDevice {
 		long tupleSizeInBits = 0;
 		for (int i = 0; i < elementsPerTuple; ++i) {
 			UniElementDescriptor descriptor = elementDescriptors[i];
-			int elementSizeInBits = descriptor.size * (descriptor.sizeUnitBytes << 3);
+			int elementSizeInBits = descriptor.getSize() * (descriptor.isSizedInBytes()?1:0 << 3);
 			tupleSizeInBits += elementSizeInBits;
 		}
 		
@@ -103,7 +103,7 @@ public class UniOpenNIDevice extends UniDevice {
 		sensorPacket.putDouble(frequency);
 		sensorPacket.putShort(elementsPerTuple);
 		for(int i = 0; i < elementsPerTuple; ++i) {
-			sensorPacket.put(elementDescriptors[i].getByte());
+			sensorPacket.put(elementDescriptors[i].getDescriptor());
 		}
 		sensorPacket.put(nullTerminatedName);
 		
