@@ -4,7 +4,7 @@ import java.util.HashMap;
 import org.OpenNI.*;
 
 
-public class uniOpenNIDevice {
+public class UniOpenNIDevice {
 	//private static final long serialVersionUID = 1L;
 	private OutArg<ScriptNode> scriptNode;
     private Context context;
@@ -31,7 +31,7 @@ public class uniOpenNIDevice {
     
     private final String SAMPLE_XML_FILE = "SamplesConfig.xml";
     
-	public uniOpenNIDevice() {
+	public UniOpenNIDevice() {
 		try {
 			scriptNode = new OutArg<ScriptNode>();
 			context = Context.createFromXmlFile(SAMPLE_XML_FILE, scriptNode);
@@ -76,12 +76,12 @@ public class uniOpenNIDevice {
 		}
 	}
 	
-	long uniGetChannelPacketSize(int elementsPerTuple, uniElementDescriptor[] elementDescriptors, 
+	long uniGetChannelPacketSize(int elementsPerTuple, UniElementDescriptor[] elementDescriptors, 
 			byte[] nullTerminatedName, long numTuples) {
 		// Construct size (in bits) of a tuple
 		long tupleSizeInBits = 0;
 		for (int i = 0; i < elementsPerTuple; ++i) {
-			uniElementDescriptor descriptor = elementDescriptors[i];
+			UniElementDescriptor descriptor = elementDescriptors[i];
 			int elementSizeInBits = descriptor.size * (descriptor.sizeUnitBytes << 3);
 			tupleSizeInBits += elementSizeInBits;
 		}
@@ -96,7 +96,7 @@ public class uniOpenNIDevice {
 	}
 	
 	boolean uniPackChannelHeader(byte[] nullTerminatedName, double frequency, 
-			long numTuples, short elementsPerTuple, uniElementDescriptor elementDescriptors[],
+			long numTuples, short elementsPerTuple, UniElementDescriptor elementDescriptors[],
 			ByteBuffer sensorPacket) throws Exception {
 		
 		sensorPacket.putLong(numTuples);
@@ -130,8 +130,8 @@ public class uniOpenNIDevice {
 		String name = "DEPTH\0";
 		byte[] depthName = name.getBytes();
 		double depthFrequency = 1.0d/(double)depthMD.getFPS();
-		uniElementDescriptor[] depthDescriptors = new uniElementDescriptor[1];
-		depthDescriptors[0] = new uniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
+		UniElementDescriptor[] depthDescriptors = new UniElementDescriptor[1];
+		depthDescriptors[0] = new UniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
 		long depthNumTuples = depth.getXRes() * depth.getYRes();
 		long depthChannelSize = uniGetChannelPacketSize(1, depthDescriptors, depthName, depthNumTuples);
 		
@@ -290,7 +290,7 @@ public class uniOpenNIDevice {
 	}
 	
 	public static void main(String s[]) {
-		uniOpenNIDevice OpenNI = new uniOpenNIDevice();
+		UniOpenNIDevice OpenNI = new UniOpenNIDevice();
 		while(true) {
 			try {
 				OpenNI.updateAll();

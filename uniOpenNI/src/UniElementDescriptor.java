@@ -1,6 +1,6 @@
 
-public class uniElementDescriptor {
-	public uniElementDescriptor(Boolean signed, Boolean integer, Boolean sizeUnitBytes, byte size) {
+public class UniElementDescriptor {
+	public UniElementDescriptor(Boolean signed, Boolean integer, Boolean sizeUnitBytes, byte size) {
 		this.signed = (byte)(signed?1:0);
 		this.integer = (byte)(integer?1:0);;
 		this.sizeUnitBytes = (byte)(sizeUnitBytes?1:0);
