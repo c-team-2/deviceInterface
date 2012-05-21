@@ -8,6 +8,11 @@ public class UniChannelHeader {
 	private UniElementDescriptor elementDescriptors[];
 	private String name;
 	
+	long getNumberTuples() { return numTuples; }
+	double getFrequency() { return frequency; }
+	UniElementDescriptor[] getElementDescriptors() { return elementDescriptors; }
+	String getName() { return name; }
+	
 	UniChannelHeader(ByteBuffer sensorPacket) 
 	{
 		numTuples = sensorPacket.getLong();
