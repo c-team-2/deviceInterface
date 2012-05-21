@@ -4,7 +4,7 @@ import java.util.HashMap;
 import org.OpenNI.*;
 
 
-public class UniOpenNIDevice {
+public class UniOpenNIDevice extends UniDevice {
 	//private static final long serialVersionUID = 1L;
 	private OutArg<ScriptNode> scriptNode;
     private Context context;
