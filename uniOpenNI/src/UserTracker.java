@@ -34,6 +34,7 @@ public class UserTracker extends Component
         imgbytes = new byte[width*height*3];
         UniDevice device = new UniOpenNIDevice();
         kinect = new Sensor(device);
+        joints = new HashMap<Integer, HashMap<Integer, float[]>>();
     }
     
     private void calcHist(Channel depth)
@@ -69,7 +70,7 @@ public class UserTracker extends Component
     }
 
 
-    void updateDepth()
+    void updateAll()
     {
         snapshot = kinect.getSensorSnapshot();
 		
@@ -97,6 +98,29 @@ public class UserTracker extends Component
 		    	}
 		    }
 		}
+		
+		// Update Joints
+		updateJoints();
+    }
+    
+    void updateJoints()
+    {
+    	Channel user1Channel = snapshot.getChannel("User1");
+    	if (user1Channel != null)
+    	{
+    		HashMap<Integer, float[]> user1Skeleton = new HashMap<Integer, float[]>();
+	    	for (int jointIndex = 0; jointIndex < 15; ++jointIndex)
+	    	{
+	    		float[] coordsAndConf = new float[4]; // coordinates (x, y, z) and confidence
+	    		coordsAndConf[0] = user1Channel.getTuple(jointIndex).getElementFloat(0);
+	    		coordsAndConf[1] = user1Channel.getTuple(jointIndex).getElementFloat(1);
+	    		coordsAndConf[2] = user1Channel.getTuple(jointIndex).getElementFloat(2);
+	    		coordsAndConf[3] = user1Channel.getTuple(jointIndex).getElementFloat(3);
+	    		
+	    		user1Skeleton.put(jointIndex, coordsAndConf);
+	    	}
+	    	joints.put(1, user1Skeleton);
+    	}
     }
 
     Color colors[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.PINK, Color.YELLOW, Color.WHITE};
@@ -116,28 +140,31 @@ public class UserTracker extends Component
     {
     	HashMap<Integer, float[]> dict = joints.get(new Integer(user));
 
-    	drawLine(g, dict, 0, 1);
-
-    	drawLine(g, dict, 2, 8);
-    	drawLine(g, dict, 5, 8);
-
-    	drawLine(g, dict, 1, 2);
-    	drawLine(g, dict, 2, 3);
-    	drawLine(g, dict, 3, 4);
-
-    	drawLine(g, dict, 2, 5);
-    	drawLine(g, dict, 5, 6);
-    	drawLine(g, dict, 6, 7);
-
-    	drawLine(g, dict, 9, 8);
-    	drawLine(g, dict, 12, 8);
-    	drawLine(g, dict, 9, 12);
-
-    	drawLine(g, dict, 9, 10);
-    	drawLine(g, dict, 10, 11);
-
-    	drawLine(g, dict, 12, 13);
-    	drawLine(g, dict, 13, 14);
+    	if (dict != null)
+    	{
+	    	drawLine(g, dict, 0, 1);
+	
+	    	drawLine(g, dict, 2, 8);
+	    	drawLine(g, dict, 5, 8);
+	
+	    	drawLine(g, dict, 1, 2);
+	    	drawLine(g, dict, 2, 3);
+	    	drawLine(g, dict, 3, 4);
+	
+	    	drawLine(g, dict, 2, 5);
+	    	drawLine(g, dict, 5, 6);
+	    	drawLine(g, dict, 6, 7);
+	
+	    	drawLine(g, dict, 9, 8);
+	    	drawLine(g, dict, 12, 8);
+	    	drawLine(g, dict, 9, 12);
+	
+	    	drawLine(g, dict, 9, 10);
+	    	drawLine(g, dict, 10, 11);
+	
+	    	drawLine(g, dict, 12, 13);
+	    	drawLine(g, dict, 13, 14);
+    	}
 
     }
     

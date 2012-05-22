@@ -11,6 +11,10 @@ public class Tuple {
 	}
 	
 	// TODO: Decide whether to throw exception on type mismatch
+	byte getElementByte(int index) {
+		return data.get(elementMetaData[index].getBufferIndex());
+	}
+	
 	short getElementShort(int index) {
 		return data.getShort(elementMetaData[index].getBufferIndex());
 	}
@@ -21,6 +25,14 @@ public class Tuple {
 	
 	long getElementLong(int index) {
 		return data.getLong(elementMetaData[index].getBufferIndex());
+	}
+	
+	float getElementFloat(int index) {
+		return data.getFloat(elementMetaData[index].getBufferIndex());
+	}
+	
+	double getElementDouble(int index) {
+		return data.getDouble(elementMetaData[index].getBufferIndex());
 	}
 	
 	byte[] getElementByteArray(int index) {

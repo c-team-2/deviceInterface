@@ -51,7 +51,7 @@ public class UniOpenNIDevice extends UniDevice {
 		
 		// Add user1 channel to capacity
 		capacity += user1Channel.getPackedSize();
-
+		numChannels++;
 		
 		// Sensor header
 		UniSensorHeader sensorHeader = new UniSensorHeader((byte) 0,(short) 0x045e, (short) 0x02ae, numChannels, 
@@ -206,14 +206,7 @@ public class UniOpenNIDevice extends UniDevice {
 			System.out.println("New user " + args.getId());
 			try
 			{
-				if (skeletonCap.needPoseForCalibration())
-				{
-					poseDetectionCap.startPoseDetection(calibPose, args.getId());
-				}
-				else
-				{
-					skeletonCap.requestSkeletonCalibration(args.getId(), true);
-				}
+				skeletonCap.requestSkeletonCalibration(args.getId(), true);
 			} catch (StatusException e)
 			{
 				e.printStackTrace();
@@ -248,14 +241,7 @@ public class UniOpenNIDevice extends UniDevice {
 			}
 			else if (args.getStatus() != CalibrationProgressStatus.MANUAL_ABORT)
 			{
-				if (skeletonCap.needPoseForCalibration())
-				{
-					poseDetectionCap.startPoseDetection(calibPose, args.getUser());
-				}
-				else
-				{
-					skeletonCap.requestSkeletonCalibration(args.getUser(), true);
-				}
+				skeletonCap.requestSkeletonCalibration(args.getUser(), true);
 			}
 			} catch (StatusException e)
 			{

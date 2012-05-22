@@ -52,7 +52,7 @@ public class UserTrackerApplication {
     void run()
     {
         while(shouldRun) {
-            viewer.updateDepth();
+            viewer.updateAll();
             viewer.repaint();
         }
         frame.dispose();

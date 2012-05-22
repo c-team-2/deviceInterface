@@ -22,11 +22,18 @@ public class Sensor {
 		
 		// Parse sensor packet into Channels and add to SensorSnapshot
 		int numChannels = sensorHeader.numChannels;
+		int readBytes = sensorHeader.getPackedSize(); // number of bytes read so far
 		for (int channelCount = 0; channelCount < numChannels; ++channelCount)
 		{
+			// Set sensorPacket to correct position
+			sensorPacket.position(readBytes);
+			
 			UniChannel uniChannel = new UniChannel(sensorPacket);
 			Channel channel = new Channel(uniChannel);
 			snapshot.addChannel(uniChannel.getHeader().getName(), channel);
+			
+			// Add to readBytes
+			readBytes += uniChannel.getPackedSize();
 		}
 		
 		return snapshot;
