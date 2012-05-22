@@ -34,7 +34,7 @@ public class UniChannel {
 		long tupleSizeInBits = 0;
 		for (int i = 0; i < descriptors.length; ++i) 
 		{
-			int elementSizeInBits = descriptors[i].getSize() * (descriptors[i].isSizedInBytes()?1:0 << 3);
+			int elementSizeInBits = descriptors[i].getSize() * (1 << (descriptors[i].isSizedInBytes()?3:0));
 			tupleSizeInBits += elementSizeInBits;
 		}
 		

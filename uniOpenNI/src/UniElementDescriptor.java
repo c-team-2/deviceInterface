@@ -5,17 +5,17 @@ public class UniElementDescriptor {
 		this.integer = integer;
 		this.sizeUnitBytes = sizeUnitBytes;
 		this.size = size;
-		byte descriptor = (byte) (this.signed?1:0 << 7);
-		descriptor |= (byte) (this.integer?1:0 << 6);
-		descriptor |= (byte) (this.sizeUnitBytes?1:0 << 5);
+		byte descriptor = (byte) ((this.signed?1:0) << 7);
+		descriptor |= (byte) ((this.integer?1:0) << 6);
+		descriptor |= (byte) ((this.sizeUnitBytes?1:0) << 5);
 		descriptor |= (byte) (this.size);
 		this.descriptor = descriptor;
 	}
 	
 	public UniElementDescriptor(byte descriptor) {
-		this.signed = (descriptor >> 7 == 1)?true:false;
-		this.integer = (descriptor >> 6 == 1)?true:false;
-		this.sizeUnitBytes = (descriptor >> 5 == 1)?true:false;
+		this.signed = ((descriptor & 128) == 128)?true:false;
+		this.integer = ((descriptor & 64) == 64)?true:false;
+		this.sizeUnitBytes = ((descriptor & 32) == 32)?true:false;
 		this.size = (byte) (descriptor & 0x1F);
 		this.descriptor = descriptor;
 	}

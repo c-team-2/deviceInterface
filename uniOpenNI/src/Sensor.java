@@ -14,6 +14,7 @@ public class Sensor {
 	{
 		// Get sensor packet from device driver
 		ByteBuffer sensorPacket = device.getSensorPacket();
+		sensorPacket.rewind();
 		
 		// Create new SensorSnapshot
 		UniSensorHeader sensorHeader = new UniSensorHeader(sensorPacket); 

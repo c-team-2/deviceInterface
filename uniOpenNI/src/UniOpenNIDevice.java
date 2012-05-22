@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 
 import org.OpenNI.*;
@@ -77,6 +78,12 @@ public class UniOpenNIDevice extends UniDevice {
 	}
 	
 	ByteBuffer getSensorPacket() {
+		try {
+			updateAll();
+		} catch (StatusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// Create depth channel
 		String depthName = "Depth";
@@ -101,6 +108,7 @@ public class UniOpenNIDevice extends UniDevice {
 		
 		// Allocate sensor packet
 		ByteBuffer sensorPacket = ByteBuffer.allocate(capacity);
+		//sensorPacket.order(ByteOrder.LITTLE_ENDIAN);
 		
 		// Pack sensor header
 		sensorHeader.packIntoByteBuffer(sensorPacket);
@@ -109,7 +117,16 @@ public class UniOpenNIDevice extends UniDevice {
 		depthChannel.packIntoByteBuffer(sensorPacket);
 		// Pack actual data TODO: (might be little endian)
 		DepthMap depthData = depthMD.getData();
-		depthData.copyToBuffer(sensorPacket, depthData.getXRes() * depthData.getYRes() * depthData.getBytesPerPixel());
+		//int size = depthData.getXRes() * depthData.getYRes() * depthData.getBytesPerPixel();
+		//ByteBuffer depthSlice = sensorPacket.slice();
+		//depthData.copyToBuffer(depthSlice, size);
+		for (int x = 0; x < depthData.getXRes(); ++x)
+		{
+			for (int y = 0; y < depthData.getYRes(); ++y)
+			{
+				sensorPacket.putShort(depthData.readPixel(x, y));
+			}
+		}
 		
 		return sensorPacket;
 	}
@@ -254,16 +271,4 @@ public class UniOpenNIDevice extends UniDevice {
 			}
 		}
 	}
-	
-	public static void main(String s[]) {
-		UniOpenNIDevice OpenNI = new UniOpenNIDevice();
-		while(true) {
-			try {
-				OpenNI.updateAll();
-			} catch (StatusException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 }

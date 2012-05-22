@@ -11,6 +11,10 @@ public class Tuple {
 	}
 	
 	// TODO: Decide whether to throw exception on type mismatch
+	short getElementShort(int index) {
+		return data.getShort(elementMetaData[index].getBufferIndex());
+	}
+	
 	int getElementInt(int index) {
 		return data.getInt(elementMetaData[index].getBufferIndex());
 	}
