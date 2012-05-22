@@ -63,5 +63,18 @@ public class UniChannelHeader {
 		
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @return the number of bytes needed for this header in a channel packet
+	 */
+	int getPackedSize()
+	{
+		int bytes = 18; 	// Add size of timestamp, frequency, elementsPerTuple
+		bytes += elementDescriptors.length; // Add size of element descriptors
+		bytes += (name.length() + 1) << 1; // Add size of name
+		
+		return bytes;
+	}
 
 }

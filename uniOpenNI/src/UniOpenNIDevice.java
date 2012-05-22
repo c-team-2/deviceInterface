@@ -76,52 +76,6 @@ public class UniOpenNIDevice extends UniDevice {
 		}
 	}
 	
-	long uniGetChannelPacketSize(int elementsPerTuple, UniElementDescriptor[] elementDescriptors, 
-			byte[] nullTerminatedName, long numTuples) {
-		// Construct size (in bits) of a tuple
-		long tupleSizeInBits = 0;
-		for (int i = 0; i < elementsPerTuple; ++i) {
-			UniElementDescriptor descriptor = elementDescriptors[i];
-			int elementSizeInBits = descriptor.getSize() * (descriptor.isSizedInBytes()?1:0 << 3);
-			tupleSizeInBits += elementSizeInBits;
-		}
-		
-		// Construct buffer size (in bytes)
-		long channelSizeInBits = tupleSizeInBits * numTuples;
-		long channelSize = channelSizeInBits >> 3;
-		channelSize += ((channelSizeInBits & 7) > 0 ? 1 : 0); // Add an extra byte if data doesn't end on byte boundary
-		channelSize += (8 + 8 + 2 + elementsPerTuple + nullTerminatedName.length); // Add size of header
-		
-		return channelSize;
-	}
-	
-	boolean uniPackChannelHeader(byte[] nullTerminatedName, double frequency, 
-			long numTuples, short elementsPerTuple, UniElementDescriptor elementDescriptors[],
-			ByteBuffer sensorPacket) throws Exception {
-		
-		sensorPacket.putLong(numTuples);
-		sensorPacket.putDouble(frequency);
-		sensorPacket.putShort(elementsPerTuple);
-		for(int i = 0; i < elementsPerTuple; ++i) {
-			sensorPacket.put(elementDescriptors[i].getDescriptor());
-		}
-		sensorPacket.put(nullTerminatedName);
-		
-		return true;
-	}
-	
-	boolean uniPackSensorHeader(byte uniVersion, short vendorID, short productID, 
-			short numChannels, long time, double frequency, ByteBuffer sensorPacket) {
-		sensorPacket.put(uniVersion);
-		sensorPacket.put((byte)0x00);
-		sensorPacket.putShort(vendorID);
-		sensorPacket.putShort(productID);
-		sensorPacket.putShort(numChannels);
-		sensorPacket.putLong(time);
-		sensorPacket.putDouble(frequency);
-		return true;
-	}
-	
 	ByteBuffer getSensorPacket() {
 		// Construct packet size
 		long capacity = 24;

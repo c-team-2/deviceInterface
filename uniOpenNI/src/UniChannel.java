@@ -22,7 +22,11 @@ public class UniChannel {
 		return true;
 	}
 	
-	long getPacketSize() 
+	/**
+	 * 
+	 * @return number of bytes needed to store this channel in a channel packet
+	 */
+	long getPackedSize() 
 	{
 		// Construct size (in bits) of a tuple
 		// TODO: assumes that tuples and channels are byte-aligned, not necessarily elements
@@ -38,9 +42,7 @@ public class UniChannel {
 		long channelSizeInBits = tupleSizeInBits * header.getNumberTuples();
 		long channelSize = channelSizeInBits >> 3;
 		channelSize += ((channelSizeInBits & 7) > 0 ? 1 : 0); // Add an extra byte if data doesn't end on byte boundary
-		channelSize += 18; 	// Add size of timestamp, frequency, elementsPerTuple
-		channelSize += descriptors.length; // Add size of element descriptors
-		channelSize += ((header.getName().length() + 1) << 1); // Add size of name
+		channelSize += header.getPackedSize();
 		
 		return channelSize;
 	}
