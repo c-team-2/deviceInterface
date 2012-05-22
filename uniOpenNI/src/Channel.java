@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer;
+
 /**
  * Representation of a Channel data after parsing a sensor packet.
  *
@@ -15,6 +16,14 @@ public class Channel {
 	private double frequency;	// Frequency in Hz at which this channel can update
 	private String name;
 	
+	int[] getDimensions() { return dimensions; }
+	int getTupleSize() { return tupleSize; }
+	long getNumberOfTuples() { return numTuples; }
+	ElementMetaData[] getElementMetaData() { return elementMetaData; }
+	double getFrequency() { return frequency; }
+	String getName() { return name; }
+	
+	
 	Channel(ByteBuffer data, int[] dimensions, ElementMetaData[] elementMD, long numTuples) {
 		this.elementMetaData = elementMD;
 		this.data = data;
@@ -24,25 +33,78 @@ public class Channel {
 		// Determine tuple size
 		int tupleSize = 0;
 		for (int i = 0; i < elementMD.length; ++i) {
-			tupleSize += elementMD[0].size;
+			tupleSize += elementMD[0].getSize();
 		}
 		
 		dimProducts[dimensions.length-1] = tupleSize;
-		for (int i = dimensions.length-2; i > 0 ; ++i) {
+		for (int i = dimensions.length-2; i >= 0 ; ++i) {
 			dimProducts[i] = dimProducts[i+1] * dimensions[i+1];
 		}
 	}
 	
 	public Channel(UniChannel uniChannel) {
-		// TODO Auto-generated constructor stub
 		UniChannelHeader header = uniChannel.getHeader();
 		UniElementDescriptor descriptors[] = header.getElementDescriptors();
+		
+		
 		this.frequency = header.getFrequency();
 		this.numTuples = header.getNumberTuples();
 		this.name = header.getName();
 		
+		// Set element metadata
+		elementMetaData = new ElementMetaData[descriptors.length];
+		int bufferIndex = 0;
+		for (int i = 0; i < descriptors.length; ++i)
+		{
+			elementMetaData[i] = new ElementMetaData(descriptors[i], bufferIndex);
+			bufferIndex += elementMetaData[i].getSize();
+		}
+		
+		// Set tupleSize
+		this.tupleSize = bufferIndex;
+		
+		// Set 1D dimension
+		// TODO: only takes int for dimension. ByteBuffer can only allocate 2GB anyway
+		this.dimensions = new int[1];
+		this.dimensions[0] = (int) this.numTuples;
+		this.dimProducts = new int[1];
+		this.dimProducts[0] = this.tupleSize;
+		
+		// Parse data
+		// TODO: assuming given sensor packet is byte aligned per element, just using given bytebuffer
+		this.data = uniChannel.getData();
 	}
 
+	/**
+	 * Sets the dimensions of the channel. Returns true if properly set
+	 * @param args - dimensions, final dimension should be the one closest together in memory
+	 * @return true if and only if product of args is equal to this channel's number of Tuples
+	 */
+	boolean setDimensions(int... args)
+	{
+		int dimensionProducts[] = new int[args.length];
+		dimensionProducts[args.length-1] = this.tupleSize;
+		for (int i = args.length-2; i >= 0 ; ++i) {
+			dimensionProducts[i] = dimensionProducts[i+1] * args[i+1];
+		}
+		
+		// Check if final product of dimensions is equal to the number of Tuples in this channel
+		if (dimensionProducts[0] / tupleSize != this.numTuples)
+		{
+			return false;
+		}
+		else
+		{
+			for (int i = 0; i < args.length; ++i)
+			{
+				this.dimensions[i] = args[i];
+				this.dimProducts[i] = dimensionProducts[i];
+			}
+		}
+		
+		return true;
+	}
+	
 	/** 
 	 * Get tuple using integer dimensions.
 	 * @param indices of tuple, 0-indexed. e.g. 639,479 for last pixel in a VGA image
