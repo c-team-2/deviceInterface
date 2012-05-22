@@ -1,37 +1,112 @@
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 import java.util.HashMap;
 
 import org.OpenNI.*;
 
 
 public class UniOpenNIDevice extends UniDevice {
-	//private static final long serialVersionUID = 1L;
-	private OutArg<ScriptNode> scriptNode;
-    private Context context;
-    private DepthGenerator depthGen;
-    private UserGenerator userGen;
-    private SkeletonCapability skeletonCap;
-    private PoseDetectionCapability poseDetectionCap;
-    String calibPose = null;
-    
-    // These are the relevant data
-    // Not everything, look at the get() functions from userGen, depthGen, depthGen.getMetaData(), etc
-    int width, height;
-    DepthMap depth;
-    long depthTimestamp;
-    FieldOfView depthFOV;
-    int depthFPS;
-    DepthMetaData depthMD;
-    
-    SceneMap scene;	//mask for which pixels are associated to a user?
-    int numUsers;
-    int users[];
-    HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> joints; //Integer is the User number
-    // End relevant data
-    
-    private final String SAMPLE_XML_FILE = "SamplesConfig.xml";
-    
+	
+	ByteBuffer getSensorPacket() {
+		try {
+			updateAll();
+		} catch (StatusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int capacity = 0;
+		short numChannels = 0;
+		
+		// Create depth channel
+		String depthName = "Depth";
+		double depthFrequency = (double) depthMD.getFPS();
+		UniElementDescriptor[] depthDescriptors = new UniElementDescriptor[1];
+		depthDescriptors[0] = new UniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
+		long depthNumTuples = depth.getXRes() * depth.getYRes();
+
+		UniChannelHeader depthHeader = new UniChannelHeader(depthNumTuples, depthFrequency, depthDescriptors, depthName);
+		// avoiding a copy, just giving empty data here.
+		UniChannel depthChannel = new UniChannel(depthHeader, ByteBuffer.allocate(0));
+		
+		// Add depth channel to capacity
+		capacity += depthChannel.getPackedSize();
+		numChannels++;
+		
+		
+		// Create User1 channel
+		String user1Name = "User1";
+		double user1Frequency = (double) sceneMD.getFPS();
+		UniElementDescriptor[] user1Descriptors = new UniElementDescriptor[4];
+		user1Descriptors[0] = new UniElementDescriptor(true, false, true, (byte) 4);
+		user1Descriptors[1] = new UniElementDescriptor(true, false, true, (byte) 4);
+		user1Descriptors[2] = new UniElementDescriptor(true, false, true, (byte) 4);
+		user1Descriptors[3] = new UniElementDescriptor(true, false, true, (byte) 4);
+		long user1NumTuples = 15;
+		
+		UniChannelHeader user1Header = new UniChannelHeader(user1NumTuples, user1Frequency, user1Descriptors, user1Name);
+		// avoiding a copy, just giving empty data here.
+		UniChannel user1Channel = new UniChannel(user1Header, ByteBuffer.allocate(0));
+		
+		// Add user1 channel to capacity
+		capacity += user1Channel.getPackedSize();
+
+		
+		// Sensor header
+		UniSensorHeader sensorHeader = new UniSensorHeader((byte) 0,(short) 0x045e, (short) 0x02ae, numChannels, 
+				System.currentTimeMillis(), 30.0d);
+		
+		// Add sensor header size to capacity
+		capacity += sensorHeader.getPackedSize();
+		
+		// Allocate sensor packet
+		ByteBuffer sensorPacket = ByteBuffer.allocate(capacity);
+		
+		// Pack sensor header
+		sensorHeader.packIntoByteBuffer(sensorPacket);
+		
+		// Pack depth data
+		depthChannel.packIntoByteBuffer(sensorPacket);
+		// Pack actual data TODO: probably should get copyToBuffer working
+		DepthMap depthData = depthMD.getData();
+		ShortBuffer depthBuffer = depthData.createShortBuffer();
+		int size = depthData.getXRes() * depthData.getYRes();
+		for (int i = 0; i < size; ++i)
+		{
+			sensorPacket.putShort(depthBuffer.get());
+		}
+		
+		// Pack user1 channel
+		user1Channel.packIntoByteBuffer(sensorPacket);
+		// Pack actual user1 data
+		HashMap<SkeletonJoint, SkeletonJointPosition> user1Skeleton = joints.get(1);
+		if (user1Skeleton != null)
+		{
+			for (int i = 0; i < 15; ++i)
+			{
+				SkeletonJointPosition pos = joints.get(1).get(jointArray[i]);
+				Point3D pos3D = pos.getPosition();
+				sensorPacket.putFloat(pos3D.getX());
+				sensorPacket.putFloat(pos3D.getY());
+				sensorPacket.putFloat(pos3D.getZ());
+				sensorPacket.putFloat(pos.getConfidence());
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 15; ++i)
+			{
+				sensorPacket.putFloat(0.0f);
+				sensorPacket.putFloat(0.0f);
+				sensorPacket.putFloat(0.0f);
+				sensorPacket.putFloat(0.0f);
+			}
+		}
+		
+		return sensorPacket;
+	}
+	
 	public UniOpenNIDevice() {
 		try {
 			scriptNode = new OutArg<ScriptNode>();
@@ -44,6 +119,7 @@ public class UniOpenNIDevice extends UniDevice {
 			height = depthMD.getFullYRes();
 			
 			userGen = UserGenerator.create(context);
+			sceneMD = userGen.getUserPixels(0);
 			skeletonCap = userGen.getSkeletonCapability();
 			poseDetectionCap = userGen.getPoseDetectionCapability();
 			
@@ -65,9 +141,13 @@ public class UniOpenNIDevice extends UniDevice {
 	}
 
 	void updateAll() throws StatusException {
-		updateDepth();
-		depthTimestamp = depthGen.getTimestamp();
-		depthFOV = depthGen.getFieldOfView();
+		context.waitAnyUpdateAll();
+
+        depthMD = depthGen.getMetaData();
+        sceneMD = userGen.getUserPixels(0);
+
+        scene = sceneMD.getData();
+        depth = depthMD.getData();
 		
 		numUsers = userGen.getNumberOfUsers();
 		users = userGen.getUsers();
@@ -76,77 +156,6 @@ public class UniOpenNIDevice extends UniDevice {
 			getJoints(users[i]);
 		}
 	}
-	
-	ByteBuffer getSensorPacket() {
-		try {
-			updateAll();
-		} catch (StatusException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// Create depth channel
-		String depthName = "Depth";
-		double depthFrequency = (double) depthMD.getFPS();
-		UniElementDescriptor[] depthDescriptors = new UniElementDescriptor[1];
-		depthDescriptors[0] = new UniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
-		long depthNumTuples = depth.getXRes() * depth.getYRes();
-
-		UniChannelHeader depthHeader = new UniChannelHeader(depthNumTuples, depthFrequency, depthDescriptors, depthName);
-		// avoiding a copy, just giving empty data here.
-		UniChannel depthChannel = new UniChannel(depthHeader, ByteBuffer.allocate(0));
-		
-
-		// Sensor header
-		short numChannels = 1;
-		UniSensorHeader sensorHeader = new UniSensorHeader((byte) 0,(short) 0x045e, (short) 0x02ae, numChannels, 
-				System.currentTimeMillis(), 30.0d);
-		
-		// Calculate sensor packet size
-		int capacity = sensorHeader.getPackedSize();
-		capacity += depthChannel.getPackedSize();
-		
-		// Allocate sensor packet
-		ByteBuffer sensorPacket = ByteBuffer.allocate(capacity);
-		//sensorPacket.order(ByteOrder.LITTLE_ENDIAN);
-		
-		// Pack sensor header
-		sensorHeader.packIntoByteBuffer(sensorPacket);
-		
-		// Pack depth data
-		depthChannel.packIntoByteBuffer(sensorPacket);
-		// Pack actual data TODO: (might be little endian)
-		DepthMap depthData = depthMD.getData();
-		//int size = depthData.getXRes() * depthData.getYRes() * depthData.getBytesPerPixel();
-		//ByteBuffer depthSlice = sensorPacket.slice();
-		//depthData.copyToBuffer(depthSlice, size);
-		for (int x = 0; x < depthData.getXRes(); ++x)
-		{
-			for (int y = 0; y < depthData.getYRes(); ++y)
-			{
-				sensorPacket.putShort(depthData.readPixel(x, y));
-			}
-		}
-		
-		return sensorPacket;
-	}
-	
-	void updateDepth()
-    {
-		try {
-			context.waitAnyUpdateAll();
-
-            depthMD = depthGen.getMetaData();
-            SceneMetaData sceneMD = userGen.getUserPixels(0);
-            
-            depthFPS = depthMD.getFPS();
-
-            scene = sceneMD.getData();
-            depth = depthMD.getData();
-        } catch (GeneralException e) {
-            e.printStackTrace();
-        }
-    }
 	
 	public void getJoint(int user, SkeletonJoint joint) throws StatusException
     {
@@ -271,4 +280,44 @@ public class UniOpenNIDevice extends UniDevice {
 			}
 		}
 	}
+	
+	private OutArg<ScriptNode> scriptNode;
+    private Context context;
+    private DepthGenerator depthGen;
+    private UserGenerator userGen;
+    private SkeletonCapability skeletonCap;
+    private PoseDetectionCapability poseDetectionCap;
+    String calibPose = null;
+    
+    // These are the relevant data
+    // Not everything, look at the get() functions from userGen, depthGen, depthGen.getMetaData(), etc
+    int width, height;
+    DepthMap depth;
+    DepthMetaData depthMD;
+    SceneMetaData sceneMD;
+    
+    SceneMap scene;	//mask for which pixels are associated to a user?
+    int numUsers;
+    int users[];
+    HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> joints; //Integer is the User number
+    // End relevant data
+    
+    SkeletonJoint jointArray[] = {
+    		SkeletonJoint.HEAD,				// 0
+    		SkeletonJoint.NECK, 			// 1
+    		SkeletonJoint.LEFT_SHOULDER,	// 2
+    		SkeletonJoint.LEFT_ELBOW,		// 3
+    		SkeletonJoint.LEFT_HAND, 		// 4
+    		SkeletonJoint.RIGHT_SHOULDER, 	// 5
+    		SkeletonJoint.RIGHT_ELBOW, 		// 6
+    		SkeletonJoint.RIGHT_HAND, 		// 7
+    		SkeletonJoint.TORSO, 			// 8
+    		SkeletonJoint.LEFT_HIP, 		// 9
+    		SkeletonJoint.LEFT_KNEE, 		// 10
+    		SkeletonJoint.LEFT_FOOT, 		// 11
+    		SkeletonJoint.RIGHT_HIP, 		// 12
+    		SkeletonJoint.RIGHT_KNEE, 		// 13
+    		SkeletonJoint.RIGHT_FOOT};		// 14
+    
+    private final String SAMPLE_XML_FILE = "SamplesConfig.xml";
 }

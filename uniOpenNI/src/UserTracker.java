@@ -8,13 +8,14 @@ import java.awt.image.*;
 public class UserTracker extends Component
 {
 	Sensor kinect;
+	SensorSnapshot snapshot;
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
     private byte[] imgbytes;
     private float histogram[];
-    HashMap<Integer, HashMap<SkeletonJoint, SkeletonJointPosition>> joints;
+    HashMap<Integer, HashMap<Integer, float[]>> joints;
 
     private boolean drawBackground = true;
     private boolean drawPixels = true;
@@ -70,7 +71,7 @@ public class UserTracker extends Component
 
     void updateDepth()
     {
-        SensorSnapshot snapshot = kinect.getSensorSnapshot();
+        snapshot = kinect.getSensorSnapshot();
 		
 		Channel depthChannel = snapshot.getChannel("Depth");
 
@@ -99,81 +100,46 @@ public class UserTracker extends Component
     }
 
     Color colors[] = {Color.RED, Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.PINK, Color.YELLOW, Color.WHITE};
-    /*public void getJoint(int user, SkeletonJoint joint) throws StatusException
+
+    void drawLine(Graphics g, HashMap<Integer, float[]> dict, int i, int j)
     {
-        SkeletonJointPosition pos = skeletonCap.getSkeletonJointPosition(user, joint);
-		if (pos.getPosition().getZ() != 0)
-		{
-			joints.get(user).put(joint, new SkeletonJointPosition(depthGen.convertRealWorldToProjective(pos.getPosition()), pos.getConfidence()));
-		}
-		else
-		{
-			joints.get(user).put(joint, new SkeletonJointPosition(new Point3D(), 0));
-		}
-    }
-    public void getJoints(int user) throws StatusException
-    {
-    	getJoint(user, SkeletonJoint.HEAD);
-    	getJoint(user, SkeletonJoint.NECK);
-    	
-    	getJoint(user, SkeletonJoint.LEFT_SHOULDER);
-    	getJoint(user, SkeletonJoint.LEFT_ELBOW);
-    	getJoint(user, SkeletonJoint.LEFT_HAND);
+		float[] pos1 = dict.get(i);
+		float[] pos2 = dict.get(j);
 
-    	getJoint(user, SkeletonJoint.RIGHT_SHOULDER);
-    	getJoint(user, SkeletonJoint.RIGHT_ELBOW);
-    	getJoint(user, SkeletonJoint.RIGHT_HAND);
-
-    	getJoint(user, SkeletonJoint.TORSO);
-
-    	getJoint(user, SkeletonJoint.LEFT_HIP);
-        getJoint(user, SkeletonJoint.LEFT_KNEE);
-        getJoint(user, SkeletonJoint.LEFT_FOOT);
-
-    	getJoint(user, SkeletonJoint.RIGHT_HIP);
-        getJoint(user, SkeletonJoint.RIGHT_KNEE);
-        getJoint(user, SkeletonJoint.RIGHT_FOOT);
-
-    }
-    void drawLine(Graphics g, HashMap<SkeletonJoint, SkeletonJointPosition> jointHash, SkeletonJoint joint1, SkeletonJoint joint2)
-    {
-		Point3D pos1 = jointHash.get(joint1).getPosition();
-		Point3D pos2 = jointHash.get(joint2).getPosition();
-
-		if (jointHash.get(joint1).getConfidence() == 0 || jointHash.get(joint2).getConfidence() == 0)
+		if (pos1[3] == 0 || pos2[3] == 0)
 			return;
 
-		g.drawLine((int)pos1.getX(), (int)pos1.getY(), (int)pos2.getX(), (int)pos2.getY());
+		g.drawLine((int)pos1[0], (int)pos1[1], (int)pos2[0], (int)pos2[1]);
     }
+    
     public void drawSkeleton(Graphics g, int user) throws StatusException
     {
-    	getJoints(user);
-    	HashMap<SkeletonJoint, SkeletonJointPosition> dict = joints.get(new Integer(user));
+    	HashMap<Integer, float[]> dict = joints.get(new Integer(user));
 
-    	drawLine(g, dict, SkeletonJoint.HEAD, SkeletonJoint.NECK);
+    	drawLine(g, dict, 0, 1);
 
-    	drawLine(g, dict, SkeletonJoint.LEFT_SHOULDER, SkeletonJoint.TORSO);
-    	drawLine(g, dict, SkeletonJoint.RIGHT_SHOULDER, SkeletonJoint.TORSO);
+    	drawLine(g, dict, 2, 8);
+    	drawLine(g, dict, 5, 8);
 
-    	drawLine(g, dict, SkeletonJoint.NECK, SkeletonJoint.LEFT_SHOULDER);
-    	drawLine(g, dict, SkeletonJoint.LEFT_SHOULDER, SkeletonJoint.LEFT_ELBOW);
-    	drawLine(g, dict, SkeletonJoint.LEFT_ELBOW, SkeletonJoint.LEFT_HAND);
+    	drawLine(g, dict, 1, 2);
+    	drawLine(g, dict, 2, 3);
+    	drawLine(g, dict, 3, 4);
 
-    	drawLine(g, dict, SkeletonJoint.NECK, SkeletonJoint.RIGHT_SHOULDER);
-    	drawLine(g, dict, SkeletonJoint.RIGHT_SHOULDER, SkeletonJoint.RIGHT_ELBOW);
-    	drawLine(g, dict, SkeletonJoint.RIGHT_ELBOW, SkeletonJoint.RIGHT_HAND);
+    	drawLine(g, dict, 2, 5);
+    	drawLine(g, dict, 5, 6);
+    	drawLine(g, dict, 6, 7);
 
-    	drawLine(g, dict, SkeletonJoint.LEFT_HIP, SkeletonJoint.TORSO);
-    	drawLine(g, dict, SkeletonJoint.RIGHT_HIP, SkeletonJoint.TORSO);
-    	drawLine(g, dict, SkeletonJoint.LEFT_HIP, SkeletonJoint.RIGHT_HIP);
+    	drawLine(g, dict, 9, 8);
+    	drawLine(g, dict, 12, 8);
+    	drawLine(g, dict, 9, 12);
 
-    	drawLine(g, dict, SkeletonJoint.LEFT_HIP, SkeletonJoint.LEFT_KNEE);
-    	drawLine(g, dict, SkeletonJoint.LEFT_KNEE, SkeletonJoint.LEFT_FOOT);
+    	drawLine(g, dict, 9, 10);
+    	drawLine(g, dict, 10, 11);
 
-    	drawLine(g, dict, SkeletonJoint.RIGHT_HIP, SkeletonJoint.RIGHT_KNEE);
-    	drawLine(g, dict, SkeletonJoint.RIGHT_KNEE, SkeletonJoint.RIGHT_FOOT);
+    	drawLine(g, dict, 12, 13);
+    	drawLine(g, dict, 13, 14);
 
-    } */
+    }
     
     public void paint(Graphics g)
     {
@@ -189,24 +155,25 @@ public class UserTracker extends Component
 
     		g.drawImage(bimg, 0, 0, null);
     	}
-        /*try
+        try
 		{
-			int[] users = userGen.getUsers();
+			int[] users = {1};
 			for (int i = 0; i < users.length; ++i)
 			{
 		    	Color c = colors[users[i]%colors.length];
 		    	c = new Color(255-c.getRed(), 255-c.getGreen(), 255-c.getBlue());
 
 		    	g.setColor(c);
-//				if (drawSkeleton && skeletonCap.isSkeletonTracking(users[i]))
-//				{
-//					drawSkeleton(g, users[i]);
-//				}
+		    	Channel user1Channel = snapshot.getChannel("User1");
+				if (drawSkeleton && (user1Channel != null))
+				{
+					drawSkeleton(g, users[i]);
+				}
 			}
 		} catch (StatusException e)
 		{
 			e.printStackTrace();
-		}*/
+		}
     }
 }
 
