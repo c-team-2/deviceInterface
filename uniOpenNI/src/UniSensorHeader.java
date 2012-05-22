@@ -38,4 +38,13 @@ class UniSensorHeader {
 			sensorPacket.putDouble(frequency);
 			return true;
 		}
+		
+		/**
+		 * 
+		 * @return number of bytes needed to store this sensor header in a sensor packet
+		 */
+		int getPackedSize()
+		{
+			return 24;
+		}
 	}

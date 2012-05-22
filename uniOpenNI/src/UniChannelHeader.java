@@ -35,12 +35,12 @@ public class UniChannelHeader {
 		name = buffer.toString();
 	}
 	
-	UniChannelHeader(long numTuples, double frequency, short elementsPerTuple,
+	UniChannelHeader(long numTuples, double frequency,
 			UniElementDescriptor elementDescriptors[], String name)
 	{
 		this.numTuples = numTuples;
 		this.frequency = frequency;
-		this.elementsPerTuple = elementsPerTuple;
+		this.elementsPerTuple = (short) elementDescriptors.length;
 		this.elementDescriptors = elementDescriptors;
 		this.name = name;
 	}

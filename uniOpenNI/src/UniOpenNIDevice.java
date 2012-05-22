@@ -77,32 +77,39 @@ public class UniOpenNIDevice extends UniDevice {
 	}
 	
 	ByteBuffer getSensorPacket() {
-		// Construct packet size
-		long capacity = 24;
 		
-		// Depth channel
-		String name = "DEPTH\0";
-		byte[] depthName = name.getBytes();
-		double depthFrequency = 1.0d/(double)depthMD.getFPS();
+		// Create depth channel
+		String depthName = "Depth";
+		double depthFrequency = (double) depthMD.getFPS();
 		UniElementDescriptor[] depthDescriptors = new UniElementDescriptor[1];
 		depthDescriptors[0] = new UniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
 		long depthNumTuples = depth.getXRes() * depth.getYRes();
-		long depthChannelSize = uniGetChannelPacketSize(1, depthDescriptors, depthName, depthNumTuples);
+
+		UniChannelHeader depthHeader = new UniChannelHeader(depthNumTuples, depthFrequency, depthDescriptors, depthName);
+		// avoiding a copy, just giving empty data here.
+		UniChannel depthChannel = new UniChannel(depthHeader, ByteBuffer.allocate(0));
 		
-		capacity += depthChannelSize;
-		ByteBuffer sensorPacket = ByteBuffer.allocate((int)capacity);
+
+		// Sensor header
 		short numChannels = 1;
+		UniSensorHeader sensorHeader = new UniSensorHeader((byte) 0,(short) 0x045e, (short) 0x02ae, numChannels, 
+				System.currentTimeMillis(), 30.0d);
 		
-		uniPackSensorHeader((byte) 0, (short) 0x045e, (short) 0x02ae, numChannels, 
-				System.currentTimeMillis(), 1.0d/30.0d, sensorPacket);
+		// Calculate sensor packet size
+		int capacity = sensorHeader.getPackedSize();
+		capacity += depthChannel.getPackedSize();
 		
-		try {
-			uniPackChannelHeader(depthName, depthFrequency,	depthNumTuples, (short) 1, 
-					depthDescriptors, sensorPacket);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Allocate sensor packet
+		ByteBuffer sensorPacket = ByteBuffer.allocate(capacity);
+		
+		// Pack sensor header
+		sensorHeader.packIntoByteBuffer(sensorPacket);
+		
+		// Pack depth data
+		depthChannel.packIntoByteBuffer(sensorPacket);
+		// Pack actual data TODO: (might be little endian)
+		DepthMap depthData = depthMD.getData();
+		depthData.copyToBuffer(sensorPacket, depthData.getXRes() * depthData.getYRes() * depthData.getBytesPerPixel());
 		
 		return sensorPacket;
 	}
