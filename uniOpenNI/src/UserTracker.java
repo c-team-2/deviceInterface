@@ -20,8 +20,6 @@ public class UserTracker extends Component
     private boolean drawBackground = true;
     private boolean drawPixels = true;
     private boolean drawSkeleton = true;
-    private boolean printID = true;
-    private boolean printState = true;
     
     
     private BufferedImage bimg;
@@ -109,9 +107,9 @@ public class UserTracker extends Component
     	if (user1Channel != null)
     	{
     		HashMap<Integer, float[]> user1Skeleton = new HashMap<Integer, float[]>();
+    		float[] coordsAndConf = new float[4]; // coordinates (x, y, z) and confidence
 	    	for (int jointIndex = 0; jointIndex < 15; ++jointIndex)
 	    	{
-	    		float[] coordsAndConf = new float[4]; // coordinates (x, y, z) and confidence
 	    		coordsAndConf[0] = user1Channel.getTuple(jointIndex).getElementFloat(0);
 	    		coordsAndConf[1] = user1Channel.getTuple(jointIndex).getElementFloat(1);
 	    		coordsAndConf[2] = user1Channel.getTuple(jointIndex).getElementFloat(2);
@@ -130,10 +128,13 @@ public class UserTracker extends Component
 		float[] pos1 = dict.get(i);
 		float[] pos2 = dict.get(j);
 
-		if (pos1[3] == 0 || pos2[3] == 0)
-			return;
-
-		g.drawLine((int)pos1[0], (int)pos1[1], (int)pos2[0], (int)pos2[1]);
+		if (pos1 != null && pos2 != null) 
+		{
+			if (pos1[3] == 0 || pos2[3] == 0)
+				return;
+	
+			g.drawLine((int)pos1[0], (int)pos1[1], (int)pos2[0], (int)pos2[1]);
+		}
     }
     
     public void drawSkeleton(Graphics g, int user) throws StatusException
@@ -191,11 +192,13 @@ public class UserTracker extends Component
 		    	c = new Color(255-c.getRed(), 255-c.getGreen(), 255-c.getBlue());
 
 		    	g.setColor(c);
-		    	Channel user1Channel = snapshot.getChannel("User1");
-				if (drawSkeleton && (user1Channel != null))
-				{
-					drawSkeleton(g, users[i]);
-				}
+		    	if (snapshot != null)
+		    	{
+					if (drawSkeleton)
+					{
+						drawSkeleton(g, users[i]);
+					}
+		    	}
 			}
 		} catch (StatusException e)
 		{

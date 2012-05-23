@@ -23,25 +23,6 @@ public class Channel {
 	double getFrequency() { return frequency; }
 	String getName() { return name; }
 	
-	
-	Channel(ByteBuffer data, int[] dimensions, ElementMetaData[] elementMD, long numTuples) {
-		this.elementMetaData = elementMD;
-		this.data = data;
-		this.dimensions = dimensions;
-		this.numTuples = numTuples;
-		
-		// Determine tuple size
-		int tupleSize = 0;
-		for (int i = 0; i < elementMD.length; ++i) {
-			tupleSize += elementMD[0].getSize();
-		}
-		
-		dimProducts[dimensions.length-1] = tupleSize;
-		for (int i = dimensions.length-2; i >= 0 ; ++i) {
-			dimProducts[i] = dimProducts[i+1] * dimensions[i+1];
-		}
-	}
-	
 	public Channel(UniChannel uniChannel) {
 		UniChannelHeader header = uniChannel.getHeader();
 		UniElementDescriptor descriptors[] = header.getElementDescriptors();

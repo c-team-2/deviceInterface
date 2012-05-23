@@ -74,6 +74,10 @@ public class UniChannelHeader {
 		bytes += elementDescriptors.length; // Add size of element descriptors
 		bytes += (name.length() + 1) << 1; // Add size of name
 		
+		// Add padding 
+		int padding = (8 - (bytes % 8)) % 8;
+		bytes += padding;
+		
 		return bytes;
 	}
 

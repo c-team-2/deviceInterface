@@ -1,5 +1,4 @@
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
 
@@ -8,7 +7,7 @@ import org.OpenNI.*;
 
 public class UniOpenNIDevice extends UniDevice {
 	
-	ByteBuffer getSensorPacket() {
+	byte[] getSensorPacket() {
 		try {
 			updateAll();
 		} catch (StatusException e) {
@@ -31,9 +30,13 @@ public class UniOpenNIDevice extends UniDevice {
 		UniChannel depthChannel = new UniChannel(depthHeader, ByteBuffer.allocate(0));
 		
 		// Add depth channel to capacity
-		capacity += depthChannel.getPackedSize();
+		long depthSize = depthChannel.getPackedSize();
+		capacity += depthSize;
 		numChannels++;
 		
+		// Check if User1 is actually tracking
+		HashMap<SkeletonJoint, SkeletonJointPosition> user1Skeleton = joints.get(1);
+		boolean includeUser1 = (user1Skeleton != null)?true:false;
 		
 		// Create User1 channel
 		String user1Name = "User1";
@@ -49,9 +52,13 @@ public class UniOpenNIDevice extends UniDevice {
 		// avoiding a copy, just giving empty data here.
 		UniChannel user1Channel = new UniChannel(user1Header, ByteBuffer.allocate(0));
 		
-		// Add user1 channel to capacity
-		capacity += user1Channel.getPackedSize();
-		numChannels++;
+		if (includeUser1)
+		{
+			// Add user1 channel to capacity
+			long user1Size = user1Channel.getPackedSize();
+			capacity += user1Size;
+			numChannels++;
+		}
 		
 		// Sensor header
 		UniSensorHeader sensorHeader = new UniSensorHeader((byte) 0,(short) 0x045e, (short) 0x02ae, numChannels, 
@@ -61,50 +68,57 @@ public class UniOpenNIDevice extends UniDevice {
 		capacity += sensorHeader.getPackedSize();
 		
 		// Allocate sensor packet
-		ByteBuffer sensorPacket = ByteBuffer.allocate(capacity);
+		ByteBuffer sensorPacket = ByteBuffer.allocateDirect(capacity);
 		
 		// Pack sensor header
 		sensorHeader.packIntoByteBuffer(sensorPacket);
+		int packedBytes = sensorHeader.getPackedSize();
 		
 		// Pack depth data
+		sensorPacket.position(packedBytes);
 		depthChannel.packIntoByteBuffer(sensorPacket);
 		// Pack actual data TODO: probably should get copyToBuffer working
-		DepthMap depthData = depthMD.getData();
-		ShortBuffer depthBuffer = depthData.createShortBuffer();
-		int size = depthData.getXRes() * depthData.getYRes();
-		for (int i = 0; i < size; ++i)
+		
+		int numPixels = depth.getXRes() * depth.getYRes();
+		int numBytes = numPixels * depth.getBytesPerPixel();
+		//ByteBuffer depthSlice = sensorPacket.slice();
+		//depth.copyToBuffer(depthSlice, numBytes);
+		ShortBuffer depthBuffer = depth.createShortBuffer();
+		for (int i = 0; i < numPixels; ++i)
 		{
 			sensorPacket.putShort(depthBuffer.get());
 		}
+		packedBytes += depthSize;
 		
-		// Pack user1 channel
-		user1Channel.packIntoByteBuffer(sensorPacket);
-		// Pack actual user1 data
-		HashMap<SkeletonJoint, SkeletonJointPosition> user1Skeleton = joints.get(1);
-		if (user1Skeleton != null)
+		if (includeUser1)
 		{
-			for (int i = 0; i < 15; ++i)
-			{
-				SkeletonJointPosition pos = joints.get(1).get(jointArray[i]);
-				Point3D pos3D = pos.getPosition();
-				sensorPacket.putFloat(pos3D.getX());
-				sensorPacket.putFloat(pos3D.getY());
-				sensorPacket.putFloat(pos3D.getZ());
-				sensorPacket.putFloat(pos.getConfidence());
-			}
-		}
-		else
-		{
-			for (int i = 0; i < 15; ++i)
-			{
-				sensorPacket.putFloat(0.0f);
-				sensorPacket.putFloat(0.0f);
-				sensorPacket.putFloat(0.0f);
-				sensorPacket.putFloat(0.0f);
-			}
+			// Pack user1 channel header
+			sensorPacket.position(packedBytes);
+			user1Channel.packIntoByteBuffer(sensorPacket);
+			// Pack actual user1 data
+			float value = 0.0f;
+			for (int i = 0; i < 15; ++i)	
+				{
+					SkeletonJointPosition pos = joints.get(1).get(jointArray[i]);
+					Point3D pos3D;
+					//pos3D = depthGen.convertRealWorldToProjective(pos.getPosition());
+					pos3D = pos.getPosition();
+					value = pos3D.getX();
+					sensorPacket.putFloat(value);
+					value = pos3D.getY();
+					sensorPacket.putFloat(value);
+					value = pos3D.getZ();
+					sensorPacket.putFloat(value);
+					value = pos.getConfidence();
+					sensorPacket.putFloat(value);
+					
+				}
 		}
 		
-		return sensorPacket;
+		byte[] byteArray = new byte[sensorPacket.limit()];
+		sensorPacket.rewind();
+		sensorPacket.get(byteArray);
+		return byteArray;
 	}
 	
 	public UniOpenNIDevice() {
@@ -164,7 +178,13 @@ public class UniOpenNIDevice extends UniDevice {
 		{
 			HashMap<SkeletonJoint, SkeletonJointPosition> userjoints = joints.get(user);
 			if(userjoints != null)
-				userjoints.put(joint, new SkeletonJointPosition(depthGen.convertRealWorldToProjective(pos.getPosition()), pos.getConfidence()));
+				userjoints.put(joint, pos);
+			else
+			{
+				userjoints = new HashMap<SkeletonJoint, SkeletonJointPosition>();
+				userjoints.put(joint, pos);
+				joints.put(user, userjoints);
+			}
 		}
 		else
 		{
@@ -197,7 +217,7 @@ public class UniOpenNIDevice extends UniDevice {
 
     }
     
-	class NewUserObserver implements IObserver<UserEventArgs>
+    class NewUserObserver implements IObserver<UserEventArgs>
 	{
 		@Override
 		public void update(IObservable<UserEventArgs> observable,
@@ -206,7 +226,14 @@ public class UniOpenNIDevice extends UniDevice {
 			System.out.println("New user " + args.getId());
 			try
 			{
-				skeletonCap.requestSkeletonCalibration(args.getId(), true);
+				if (skeletonCap.needPoseForCalibration())
+				{
+					poseDetectionCap.startPoseDetection(calibPose, args.getId());
+				}
+				else
+				{
+					skeletonCap.requestSkeletonCalibration(args.getId(), true);
+				}
 			} catch (StatusException e)
 			{
 				e.printStackTrace();
@@ -230,7 +257,7 @@ public class UniOpenNIDevice extends UniDevice {
 		public void update(IObservable<CalibrationProgressEventArgs> observable,
 				CalibrationProgressEventArgs args)
 		{
-			System.out.println("Calibraion complete: " + args.getStatus());
+			System.out.println("Calibration complete: " + args.getStatus());
 			try
 			{
 			if (args.getStatus() == CalibrationProgressStatus.OK)
@@ -241,7 +268,14 @@ public class UniOpenNIDevice extends UniDevice {
 			}
 			else if (args.getStatus() != CalibrationProgressStatus.MANUAL_ABORT)
 			{
-				skeletonCap.requestSkeletonCalibration(args.getUser(), true);
+				if (skeletonCap.needPoseForCalibration())
+				{
+					poseDetectionCap.startPoseDetection(calibPose, args.getUser());
+				}
+				else
+				{
+					skeletonCap.requestSkeletonCalibration(args.getUser(), true);
+				}
 			}
 			} catch (StatusException e)
 			{
