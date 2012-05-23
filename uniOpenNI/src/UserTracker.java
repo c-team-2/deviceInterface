@@ -205,5 +205,10 @@ public class UserTracker extends Component
 			e.printStackTrace();
 		}
     }
+    
+    public Dimension getPreferredSize() {
+        return new Dimension(width, height);
+    }
+    
 }
 
