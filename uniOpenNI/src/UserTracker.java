@@ -68,7 +68,7 @@ public class UserTracker extends Component
     }
 
 
-    void updateAll()
+    void updateDepth()
     {
         snapshot = kinect.getSensorSnapshot();
 		
@@ -192,13 +192,10 @@ public class UserTracker extends Component
 		    	c = new Color(255-c.getRed(), 255-c.getGreen(), 255-c.getBlue());
 
 		    	g.setColor(c);
-		    	if (snapshot != null)
-		    	{
-					if (drawSkeleton)
-					{
-						drawSkeleton(g, users[i]);
-					}
-		    	}
+		    	if (drawSkeleton)
+				{
+					drawSkeleton(g, users[i]);
+				}
 			}
 		} catch (StatusException e)
 		{

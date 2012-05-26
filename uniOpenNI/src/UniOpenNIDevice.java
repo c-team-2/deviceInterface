@@ -80,7 +80,7 @@ public class UniOpenNIDevice extends UniDevice {
 		// Pack actual data TODO: probably should get copyToBuffer working
 		
 		int numPixels = depth.getXRes() * depth.getYRes();
-		int numBytes = numPixels * depth.getBytesPerPixel();
+		//int numBytes = numPixels * depth.getBytesPerPixel();
 		//ByteBuffer depthSlice = sensorPacket.slice();
 		//depth.copyToBuffer(depthSlice, numBytes);
 		ShortBuffer depthBuffer = depth.createShortBuffer();
