@@ -106,10 +106,10 @@ public class UserTracker extends Component
     	Channel user1Channel = snapshot.getChannel("User1");
     	if (user1Channel != null)
     	{
-    		HashMap<Integer, float[]> user1Skeleton = new HashMap<Integer, float[]>();
-    		float[] coordsAndConf = new float[4]; // coordinates (x, y, z) and confidence
+    		HashMap<Integer, float[]> user1Skeleton = new HashMap<Integer, float[]>();	
 	    	for (int jointIndex = 0; jointIndex < 15; ++jointIndex)
 	    	{
+	    		float[] coordsAndConf = new float[4]; // coordinates (x, y, z) and confidence
 	    		coordsAndConf[0] = user1Channel.getTuple(jointIndex).getElementFloat(0);
 	    		coordsAndConf[1] = user1Channel.getTuple(jointIndex).getElementFloat(1);
 	    		coordsAndConf[2] = user1Channel.getTuple(jointIndex).getElementFloat(2);
