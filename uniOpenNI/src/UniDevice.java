@@ -8,6 +8,6 @@ public abstract class UniDevice {
 	 * Constructs and returns a new sensor packet as a byte array.
 	 * @return the sensor packet
 	 */
-	abstract byte[] getSensorPacket();
+	public abstract byte[] getSensorPacket();
 
 }

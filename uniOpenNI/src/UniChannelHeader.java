@@ -12,17 +12,17 @@ public class UniChannelHeader {
 	private UniElementDescriptor elementDescriptors[];
 	private String name;
 	
-	long getNumberTuples() { return numTuples; }
-	double getFrequency() { return frequency; }
-	UniElementDescriptor[] getElementDescriptors() { return elementDescriptors; }
-	String getName() { return name; }
+	public long getNumberTuples() { return numTuples; }
+	public double getFrequency() { return frequency; }
+	public UniElementDescriptor[] getElementDescriptors() { return elementDescriptors; }
+	public String getName() { return name; }
 	
 	/**
-	 * Construct a UniChannelHeader from a sensor packet.
-	 * @param sensorPacket - the ByteBuffer containing the sensor packet, 
+	 * Construct a <code>UniChannelHeader</code> from a sensor packet.
+	 * @param sensorPacket the <code>ByteBuffer</code> containing the sensor packet, 
 	 * with its position where the channel header starts
 	 */
-	UniChannelHeader(ByteBuffer sensorPacket) 
+	public UniChannelHeader(ByteBuffer sensorPacket) 
 	{
 		numTuples = sensorPacket.getLong();
 		frequency = sensorPacket.getDouble();
@@ -44,7 +44,7 @@ public class UniChannelHeader {
 		name = buffer.toString();
 	}
 	
-	UniChannelHeader(long numTuples, double frequency,
+	public UniChannelHeader(long numTuples, double frequency,
 			UniElementDescriptor elementDescriptors[], String name)
 	{
 		this.numTuples = numTuples;
@@ -55,11 +55,11 @@ public class UniChannelHeader {
 	}
 	
 	/**
-	 * Write the channel packet header into a ByteBuffer at the ByteBuffer's position.
-	 * @param sensorPacket - the ByteBuffer to write the channel packet into, 
+	 * Write the channel packet header into a <code>ByteBuffer</code> at the <code>ByteBuffer</code>'s position.
+	 * @param sensorPacket the <code>ByteBuffer</code> to write the channel packet into, 
 	 * positioned where the channel packet should start.
 	 */
-	boolean packIntoByteBuffer(ByteBuffer sensorPacket)
+	public boolean packIntoByteBuffer(ByteBuffer sensorPacket)
 	{
 		sensorPacket.putLong(numTuples);
 		sensorPacket.putDouble(frequency);
@@ -83,7 +83,7 @@ public class UniChannelHeader {
 	 * the channel packet format.
 	 * @return number of bytes needed to store this channel header in a channel packet
 	 */
-	int getPackedSize()
+	public int getPackedSize()
 	{
 		int bytes = 18; 	// Add size of timestamp, frequency, elementsPerTuple
 		bytes += elementDescriptors.length; // Add size of element descriptors

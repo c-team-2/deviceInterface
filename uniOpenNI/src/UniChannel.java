@@ -10,8 +10,8 @@ public class UniChannel {
 	private UniChannelHeader header;
 	
 	/**
-	 * Construct a UniChannel from a sensor packet.
-	 * @param sensorPacket - the ByteBuffer containing the sensor packet, 
+	 * Construct a <code>UniChannel</code> from a sensor packet.
+	 * @param sensorPacket the <code>ByteBuffer</code> containing the sensor packet, 
 	 * with its position where the channel header starts
 	 */
 	public UniChannel(ByteBuffer sensorPacket) {		
@@ -33,11 +33,11 @@ public class UniChannel {
 	}
 
 	/**
-	 * Write the channel packet into a ByteBuffer at the ByteBuffer's position.
-	 * @param sensorPacket - the ByteBuffer to write the channel packet into, 
+	 * Write the channel packet into a <code>ByteBuffer</code> at the <code>ByteBuffer</code>'s position.
+	 * @param sensorPacket the <code>ByteBuffer</code> to write the channel packet into, 
 	 * positioned where the channel packet should start.
 	 */
-	void packIntoByteBuffer(ByteBuffer sensorPacket) 
+	public void packIntoByteBuffer(ByteBuffer sensorPacket) 
 	{
 		header.packIntoByteBuffer(sensorPacket);
 		
@@ -53,7 +53,7 @@ public class UniChannel {
 	 * the channel packet format.
 	 * @return number of bytes needed to store this channel in a channel packet
 	 */
-	long getPackedSize() 
+	public long getPackedSize() 
 	{
 		long dataSize = getPackedDataSize();
 		
@@ -65,11 +65,11 @@ public class UniChannel {
 	}
 	
 	/**
-	 * Returns the size of the data in bytes. Calculated from the UniElementDescriptors
-	 * in this channel's header.
+	 * Returns the size of the data in bytes. Calculated from the <code>UniElementDescriptor</code>s
+	 * in this channel's <code>UniChannelHeader</code>.
 	 * @return size of the data in bytes
 	 */
-	long getPackedDataSize()
+	public long getPackedDataSize()
 	{
 		// Construct size (in bits) of a tuple
 		// TODO: assumes that tuples and channels are byte-aligned, not necessarily elements
@@ -93,6 +93,6 @@ public class UniChannel {
 		return dataSize;
 	}
 	
-	ByteBuffer getData() { return data; }
-	UniChannelHeader getHeader() { return header; }
+	public ByteBuffer getData() { return data; }
+	public UniChannelHeader getHeader() { return header; }
 }

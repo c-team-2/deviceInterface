@@ -1,7 +1,7 @@
 import java.nio.ByteBuffer;
 
 /**
- * The interface used to retrieve and parse sensor packets from a UniDevice. 
+ * The interface used to retrieve and parse sensor packets from a <code>UniDevice</code>. 
  * @author Greg Clark
  *
  */
@@ -9,16 +9,18 @@ public class Sensor {
 	
 	private UniDevice device;
 	
-	Sensor(UniDevice device)
+	public Sensor(UniDevice device)
 	{
 		this.device = device;
 	}
 	
 	/**
-	 * Asks the device to construct a new sensor packet and returns the data as a SensorSnapshot.
-	 * @return the SensorSnapshot
+	 * Asks the device to construct a new sensor packet and returns the data as
+	 *  a <code>SensorSnapshot</code>. This method will block while waiting for
+	 *  the device to return a sensor packet.
+	 * @return the <code>SensorSnapshot</code>
 	 */
-	SensorSnapshot getSensorSnapshot()
+	public SensorSnapshot getSensorSnapshot()
 	{
 		// Get sensor packet from device driver
 		ByteBuffer sensorPacket = ByteBuffer.wrap(device.getSensorPacket()).asReadOnlyBuffer();

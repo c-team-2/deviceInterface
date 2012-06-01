@@ -1,6 +1,6 @@
 /**
  * Contains information about an element's type and the position of this element
- * in the tuple's data ByteBuffer.
+ * in the <code>Tuple</code>'s data <code>ByteBuffer</code>.
  * @author Greg Clark
  *
  */
@@ -65,7 +65,7 @@ public class ElementMetaData {
 	private int size;			// Size of element in bytes
 	private int bufferIndex;	// index in ByteBuffer in bytes of this element relative to beginning of tuple
 	
-	UniType getType() { return type; }
-	int getSize() { return size; }
-	int getBufferIndex() { return bufferIndex; }
+	public UniType getType() { return type; }
+	public int getSize() { return size; }
+	public int getBufferIndex() { return bufferIndex; }
 }

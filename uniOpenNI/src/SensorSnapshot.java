@@ -11,7 +11,7 @@ public class SensorSnapshot {
 	private Date timestamp;
 	private HashMap<String, Channel> channels;
 	
-	SensorSnapshot(Sensor sensor, UniSensorHeader sensorHeader)
+	public SensorSnapshot(Sensor sensor, UniSensorHeader sensorHeader)
 	{
 		this.sensor = sensor;
 		this.timestamp = new Date(sensorHeader.timestamp);
@@ -19,30 +19,31 @@ public class SensorSnapshot {
 	}
 	
 	/**
-	 * 
+	 * Returns the timestamp in the sensor packet from which this 
+	 * <code>SensorSnapshot</code> was constructed.
 	 * @return the Date of when the device's sensor packet was constructed.
 	 */
-	Date getTimestamp() { return timestamp; }
+	public Date getTimestamp() { return timestamp; }
 	
 	/**
-	 * Add a Channel to this SensorSnapshot.
-	 * @param name - name of the Channel to be added.
-	 * @param channel - the Channel to be added.
+	 * Add a <code>Channel</code> to this <code>SensorSnapshot</code>.
+	 * @param name name of the <code>Channel</code> to be added.
+	 * @param channel the <code>Channel</code> to be added.
 	 */
-	void addChannel(String name, Channel channel) {
+	public void addChannel(String name, Channel channel) {
 		channels.put(name, channel);
 	}
 	
 	/**
 	 * 
-	 * @return the Sensor that created this SensorSnapshot.
+	 * @return the <code>Sensor</code> that created this <code>SensorSnapshot</code>.
 	 */
-	Sensor getSensor() { return sensor; }
+	public Sensor getSensor() { return sensor; }
 	
 	/**
 	 * 
-	 * @param name - name of the Channel to get.
-	 * @return the Channel, null if there is no Channel with the given name.
+	 * @param name name of the <code>Channel</code> to get.
+	 * @return the <code>Channel</code>, null if there is no <code>Channel</code> with the given name.
 	 */
-	Channel getChannel(String name) { return channels.get(name); }
+	public Channel getChannel(String name) { return channels.get(name); }
 }

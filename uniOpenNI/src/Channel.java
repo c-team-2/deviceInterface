@@ -1,8 +1,9 @@
 import java.nio.ByteBuffer;
 
 /**
- * Representation of a Channel data after parsing a sensor packet.
+ * Representation of a data channel after parsing a channel packet.
  *
+ * @author Greg Clark
  */
 public class Channel {
 	private ByteBuffer data;	// The parsed data, tuple elements are byte-aligned
@@ -58,10 +59,11 @@ public class Channel {
 
 	/**
 	 * Sets the dimensions of the channel. Returns true if properly set
-	 * @param args - dimensions, final dimension should be the one closest together in memory
+	 * @param args the new dimensions to set. The final dimension should be the one closest together in memory
 	 * @return true if and only if product of args is equal to this channel's number of Tuples
 	 */
-	boolean setDimensions(int... args)
+	//TODO: throw exception instead of returning?
+	public boolean setDimensions(int... args)
 	{
 		int dimensionProducts[] = new int[args.length];
 		dimensionProducts[args.length-1] = this.tupleSize;
@@ -89,11 +91,11 @@ public class Channel {
 	/** 
 	 * Get tuple using integer dimensions.
 	 * @param indices of tuple, 0-indexed. e.g. 639,479 for last pixel in a VGA image
-	 * @return Tuple
-	 * @throws IllegalArgumentException if the dimensionality is higher than this Channel's dimensionality
-	 * 	or if the calculated index is too high
+	 * @return the <code>Tuple</code>
+	 * @throws IllegalArgumentException if the dimensionality is higher than this
+	 *  <code>Channel</code>'s dimensionality or if the calculated index is too high
 	 */
-	Tuple getTuple(int... indices) throws IllegalArgumentException {
+	public Tuple getTuple(int... indices) throws IllegalArgumentException {
 		// TODO: Decide whether to check bounds of each dimension or just final index
 		if (indices.length > dimensions.length)
 		{

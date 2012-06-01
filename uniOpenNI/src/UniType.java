@@ -3,7 +3,7 @@
  * @author Greg Clark
  *
  */
-enum UniType 
+public enum UniType 
 {
 	int8,
 	int16,

@@ -7,7 +7,7 @@ import org.OpenNI.*;
 
 public class UniOpenNIDevice extends UniDevice {
 	
-	byte[] getSensorPacket() {
+	public byte[] getSensorPacket() {
 		try {
 			updateAll();
 		} catch (StatusException e) {

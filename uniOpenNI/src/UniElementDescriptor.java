@@ -24,11 +24,11 @@ public class UniElementDescriptor {
 		this.descriptor = descriptor;
 	}
 
-	boolean isSigned() { return signed; }
-	boolean isInteger() { return integer; }
-	boolean isSizedInBytes() { return sizeUnitBytes; }
-	byte getSize() { return size; }
-	byte getDescriptor() { return descriptor; }
+	public boolean isSigned() { return signed; }
+	public boolean isInteger() { return integer; }
+	public boolean isSizedInBytes() { return sizeUnitBytes; }
+	public byte getSize() { return size; }
+	public byte getDescriptor() { return descriptor; }
 	
 	private boolean signed;
 	private boolean integer;
