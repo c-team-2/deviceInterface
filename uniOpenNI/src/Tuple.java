@@ -15,6 +15,12 @@ public class Tuple {
 		elementMetaData = elementMD;
 	}
 	
+	/**
+	 * Returns the element at the given index in this tuple.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as a byte
+	 * @throws Exception if element is not of type byte.
+	 */
 	byte getElementByte(int index) throws Exception {
 		if (elementMetaData[index].getType() != UniType.int8)
 		{
@@ -22,7 +28,13 @@ public class Tuple {
 		}
 		return data.get(elementMetaData[index].getBufferIndex());
 	}
-	
+
+	/**
+	 * Returns the element at the given index in this tuple.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as a short
+	 * @throws Exception if element is not of type short.
+	 */
 	short getElementShort(int index) throws Exception {
 		if (elementMetaData[index].getType() != UniType.int16)
 		{
@@ -31,6 +43,12 @@ public class Tuple {
 		return data.getShort(elementMetaData[index].getBufferIndex());
 	}
 	
+	/**
+	 * Returns the element at the given index in this tuple.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as an int
+	 * @throws Exception if element is not of type int.
+	 */
 	int getElementInt(int index) throws Exception {
 		if (elementMetaData[index].getType() != UniType.int32)
 		{
@@ -39,6 +57,12 @@ public class Tuple {
 		return data.getInt(elementMetaData[index].getBufferIndex());
 	}
 	
+	/**
+	 * Returns the element at the given index in this tuple.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as a long
+	 * @throws Exception if element is not of type long.
+	 */
 	long getElementLong(int index) throws Exception {
 		if (elementMetaData[index].getType() != UniType.int64)
 		{
@@ -47,6 +71,12 @@ public class Tuple {
 		return data.getLong(elementMetaData[index].getBufferIndex());
 	}
 	
+	/**
+	 * Returns the element at the given index in this tuple.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as a float
+	 * @throws Exception if element is not of type float.
+	 */
 	float getElementFloat(int index) throws Exception {
 		if (elementMetaData[index].getType() != UniType.float32)
 		{
@@ -55,6 +85,12 @@ public class Tuple {
 		return data.getFloat(elementMetaData[index].getBufferIndex());
 	}
 	
+	/**
+	 * Returns the element at the given index in this tuple.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as a double
+	 * @throws Exception if element is not of type double.
+	 */
 	double getElementDouble(int index) throws Exception {
 		if (elementMetaData[index].getType() != UniType.float64)
 		{
@@ -63,6 +99,11 @@ public class Tuple {
 		return data.getDouble(elementMetaData[index].getBufferIndex());
 	}
 	
+	/**
+	 * Returns the element at the given index in this tuple. The element can be of any type.
+	 * @param index - the 0-based index of the element in this tuple.
+	 * @return the element as a ByteBuffer
+	 */
 	ByteBuffer getElementByteBuffer(int index) {
 		// Create new ByteBuffer that is a slice of this one
 		data.position(elementMetaData[index].getBufferIndex());

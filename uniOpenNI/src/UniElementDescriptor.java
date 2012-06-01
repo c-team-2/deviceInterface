@@ -1,4 +1,8 @@
-
+/**
+ * Represents a tuple element descriptor.
+ * @author Greg Clark
+ *
+ */
 public class UniElementDescriptor {
 	public UniElementDescriptor(boolean signed, boolean integer, boolean sizeUnitBytes, byte size) {
 		this.signed = signed;

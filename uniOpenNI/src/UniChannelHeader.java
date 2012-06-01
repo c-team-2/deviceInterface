@@ -1,6 +1,10 @@
 import java.nio.ByteBuffer;
 
-
+/**
+ * Represents the header of a channel packet.
+ * @author Greg Clark
+ *
+ */
 public class UniChannelHeader {
 	private long numTuples;
 	private double frequency;
@@ -13,6 +17,11 @@ public class UniChannelHeader {
 	UniElementDescriptor[] getElementDescriptors() { return elementDescriptors; }
 	String getName() { return name; }
 	
+	/**
+	 * Construct a UniChannelHeader from a sensor packet.
+	 * @param sensorPacket - the ByteBuffer containing the sensor packet, 
+	 * with its position where the channel header starts
+	 */
 	UniChannelHeader(ByteBuffer sensorPacket) 
 	{
 		numTuples = sensorPacket.getLong();
@@ -45,6 +54,11 @@ public class UniChannelHeader {
 		this.name = name;
 	}
 	
+	/**
+	 * Write the channel packet header into a ByteBuffer at the ByteBuffer's position.
+	 * @param sensorPacket - the ByteBuffer to write the channel packet into, 
+	 * positioned where the channel packet should start.
+	 */
 	boolean packIntoByteBuffer(ByteBuffer sensorPacket)
 	{
 		sensorPacket.putLong(numTuples);
@@ -65,8 +79,9 @@ public class UniChannelHeader {
 	}
 	
 	/**
-	 * 
-	 * @return the number of bytes needed for this header in a channel packet
+	 * Returns the size in bytes that this channel header would require if written in 
+	 * the channel packet format.
+	 * @return number of bytes needed to store this channel header in a channel packet
 	 */
 	int getPackedSize()
 	{

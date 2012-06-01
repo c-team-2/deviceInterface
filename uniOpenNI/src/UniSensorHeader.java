@@ -1,5 +1,10 @@
 import java.nio.ByteBuffer;
 
+/**
+ * Represents the header of a sensor packet.
+ * @author Greg Clark
+ *
+ */
 class UniSensorHeader {
 		byte version;
 		short vendorID;
@@ -8,6 +13,11 @@ class UniSensorHeader {
 		long timestamp;
 		double frequency;
 		
+		/**
+		 * Construct a UniSensorHeader from a sensor packet.
+		 * @param sensorPacket - the ByteBuffer containing the sensor packet, 
+		 * with its position at the beginning of the sensor packet
+		 */
 		UniSensorHeader(ByteBuffer sensorPacket) {
 			version = sensorPacket.get();
 			sensorPacket.get();
@@ -28,6 +38,11 @@ class UniSensorHeader {
 			this.frequency = frequency;
 		}
 		
+		/**
+		 * Write the sensor packet header into a ByteBuffer at the ByteBuffer's position.
+		 * @param sensorPacket - the ByteBuffer to write the sensor packet header into, 
+		 * positioned where the sensor packet header should start.
+		 */
 		boolean packIntoByteBuffer(ByteBuffer sensorPacket) {
 			sensorPacket.put(version);
 			sensorPacket.put((byte)0x00);
@@ -40,7 +55,8 @@ class UniSensorHeader {
 		}
 		
 		/**
-		 * 
+		 * Returns the size in bytes that this sensor header would require if written in 
+		 * the sensor packet format.
 		 * @return number of bytes needed to store this sensor header in a sensor packet
 		 */
 		int getPackedSize()

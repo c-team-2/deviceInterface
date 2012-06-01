@@ -1,10 +1,19 @@
 import java.nio.ByteBuffer;
 
-
+/**
+ * A channel of raw data from the device.
+ * @author Greg Clark
+ *
+ */
 public class UniChannel {
 	private ByteBuffer data;
 	private UniChannelHeader header;
 	
+	/**
+	 * Construct a UniChannel from a sensor packet.
+	 * @param sensorPacket - the ByteBuffer containing the sensor packet, 
+	 * with its position where the channel header starts
+	 */
 	public UniChannel(ByteBuffer sensorPacket) {		
 		header = new UniChannelHeader(sensorPacket);
 		
@@ -15,7 +24,6 @@ public class UniChannel {
 		int dataSize = (int) getPackedDataSize();
 		ByteBuffer dataBuffer = sensorPacket.slice();
 		
-		//TODO: not sure if this casting is okay
 		data = (ByteBuffer) dataBuffer.limit(dataSize);
 	}
 	
@@ -24,7 +32,12 @@ public class UniChannel {
 		this.data = data;
 	}
 
-	boolean packIntoByteBuffer(ByteBuffer sensorPacket) 
+	/**
+	 * Write the channel packet into a ByteBuffer at the ByteBuffer's position.
+	 * @param sensorPacket - the ByteBuffer to write the channel packet into, 
+	 * positioned where the channel packet should start.
+	 */
+	void packIntoByteBuffer(ByteBuffer sensorPacket) 
 	{
 		header.packIntoByteBuffer(sensorPacket);
 		
@@ -33,11 +46,11 @@ public class UniChannel {
 		sensorPacket.position(sensorPacket.position() + padding);
 				
 		sensorPacket.put(data);
-		return true;
 	}
 	
 	/**
-	 * 
+	 * Returns the size in bytes that this channel would require if written in 
+	 * the channel packet format.
 	 * @return number of bytes needed to store this channel in a channel packet
 	 */
 	long getPackedSize() 
@@ -51,6 +64,11 @@ public class UniChannel {
 		return channelSize;
 	}
 	
+	/**
+	 * Returns the size of the data in bytes. Calculated from the UniElementDescriptors
+	 * in this channel's header.
+	 * @return size of the data in bytes
+	 */
 	long getPackedDataSize()
 	{
 		// Construct size (in bits) of a tuple

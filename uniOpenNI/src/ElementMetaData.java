@@ -1,5 +1,5 @@
 /**
- * Contains type information about an element and the position of this element
+ * Contains information about an element's type and the position of this element
  * in the tuple's data ByteBuffer.
  * @author Greg Clark
  *
