@@ -6,12 +6,21 @@ import java.nio.ByteBuffer;
  *
  */
 class UniSensorHeader {
-		byte version;
-		short vendorID;
-		short productID;
-		short numChannels;
-		long timestamp;
-		double frequency;
+		private byte version;
+		private short vendorID;
+		private short productID;
+		private short numChannels;
+		private long timestamp;
+		private double frequency;
+		private int encryptionFlags;
+		
+		public byte getVersion() { return version; }
+		public short getVendorID() { return vendorID; }
+		public short getProductID() { return productID; }
+		public short getNumChannels() { return numChannels; }
+		public long getTimestamp() { return timestamp; }
+		public double getFrequency() { return frequency; }
+		public int getEncryptionFlags() { return encryptionFlags; }
 		
 		/**
 		 * Construct a <code>UniSensorHeader</code> from a sensor packet.
@@ -26,16 +35,18 @@ class UniSensorHeader {
 			numChannels = sensorPacket.getShort();
 			timestamp = sensorPacket.getLong();
 			frequency = sensorPacket.getDouble();
+			encryptionFlags = sensorPacket.getInt();
 		}
 		
 		public UniSensorHeader(byte version, short vendorID, short productID, 
-				short numChannels, long timestamp, double frequency) {
+				short numChannels, long timestamp, double frequency, int encryptionFlags) {
 			this.version = version;
 			this.vendorID = vendorID;
 			this.productID = productID;
 			this.numChannels = numChannels;
 			this.timestamp = timestamp;
 			this.frequency = frequency;
+			this.encryptionFlags = encryptionFlags;
 		}
 		
 		/**
@@ -51,6 +62,7 @@ class UniSensorHeader {
 			sensorPacket.putShort(numChannels);
 			sensorPacket.putLong(timestamp);
 			sensorPacket.putDouble(frequency);
+			sensorPacket.putInt(encryptionFlags);
 			return true;
 		}
 		
@@ -61,6 +73,6 @@ class UniSensorHeader {
 		 */
 		public int getPackedSize()
 		{
-			return 24;
+			return 32;
 		}
 	}

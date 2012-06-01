@@ -14,7 +14,7 @@ public class SensorSnapshot {
 	public SensorSnapshot(Sensor sensor, UniSensorHeader sensorHeader)
 	{
 		this.sensor = sensor;
-		this.timestamp = new Date(sensorHeader.timestamp);
+		this.timestamp = new Date(sensorHeader.getTimestamp());
 		this.channels = new HashMap<String, Channel>();
 	}
 	

@@ -62,7 +62,7 @@ public class UniOpenNIDevice extends UniDevice {
 		
 		// Sensor header
 		UniSensorHeader sensorHeader = new UniSensorHeader((byte) 0,(short) 0x045e, (short) 0x02ae, numChannels, 
-				System.currentTimeMillis(), 30.0d);
+				System.currentTimeMillis(), 30.0d, 0);
 		
 		// Add sensor header size to capacity
 		capacity += sensorHeader.getPackedSize();
