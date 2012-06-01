@@ -44,7 +44,8 @@ public class UniChannel {
 		// Add padding before packing data
 		int padding = (8 - (sensorPacket.position() % 8)) % 8;
 		sensorPacket.position(sensorPacket.position() + padding);
-				
+		
+		data.rewind();
 		sensorPacket.put(data);
 	}
 	

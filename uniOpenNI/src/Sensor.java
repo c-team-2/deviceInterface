@@ -7,23 +7,22 @@ import java.nio.ByteBuffer;
  */
 public class Sensor {
 	
-	public interface Decryptor
+	/**
+	 * Dummy function to be implemented later for decrypting the sensor packet
+	 * @param encryptedBuffer
+	 * @param encryptionFlags
+	 * @return
+	 */
+	private ByteBuffer decrypt(int encryptionFlags, ByteBuffer encryptedBuffer)
 	{
-		ByteBuffer decrypt(ByteBuffer encryptedBuffer, int encryptionFlags);
+		return encryptedBuffer;
 	}
 	
 	private UniDevice device;
-	private Decryptor decryptor;	
 	
 	public Sensor(UniDevice device)
 	{
 		this.device = device;
-		this.decryptor = null;
-	}
-	
-	public void addDecryptor(Decryptor decryptor)
-	{
-		this.decryptor = decryptor;
 	}
 	
 	/**
@@ -46,16 +45,8 @@ public class Sensor {
 		int numChannels = sensorHeader.getNumChannels();
 		
 		// Decrypt the raw packet if necessary
-		ByteBuffer sensorPacket;
-		if (decryptor != null)
-		{
-			int encryptionFlags = sensorHeader.getEncryptionFlags();
-			sensorPacket = decryptor.decrypt(rawPacket, encryptionFlags);
-		}
-		else
-		{
-			sensorPacket = rawPacket;
-		}
+		int encryptionFlags = sensorHeader.getEncryptionFlags();
+		ByteBuffer sensorPacket =  decrypt(encryptionFlags, rawPacket);
 		
 		int readBytes = sensorHeader.getPackedSize(); // number of bytes read so far
 		for (int channelCount = 0; channelCount < numChannels; ++channelCount)
