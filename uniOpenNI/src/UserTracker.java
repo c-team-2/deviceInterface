@@ -45,12 +45,23 @@ public class UserTracker extends Component
         int depthIterator = 0;
         while(depthIterator < depth.getNumberOfTuples())
         {
-            short depthVal = depth.getTuple(depthIterator++).getElementShort(0);
-            if (depthVal != 0)
-            {
-                histogram[depthVal]++;
-                points++;
-            }
+            short depthVal;
+			try {
+				depthVal = depth.getTuple(depthIterator++).getElementShort(0);
+				
+				if (depthVal != 0)
+	            {
+	                histogram[depthVal]++;
+	                points++;
+	            }
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
         }
         
         for (int i = 1; i < histogram.length; i++)
@@ -78,23 +89,32 @@ public class UserTracker extends Component
 		
 		for (int i = 0; i < depthChannel.getNumberOfTuples(); ++i)
 		{
-		    short pixel = depthChannel.getTuple(i).getElementShort(0);
-		    
-			imgbytes[3*i] = 0;
-			imgbytes[3*i+1] = 0;
-			imgbytes[3*i] = 0;                	
+		    short pixel;
+			try {
+				pixel = depthChannel.getTuple(i).getElementShort(0);
+				
+				imgbytes[3*i] = 0;
+				imgbytes[3*i+1] = 0;
+				imgbytes[3*i] = 0;                	
 
-		    if (drawBackground || pixel != 0)
-		    {
-		    	int colorID = colors.length-1;
-		    	if (pixel != 0)
-		    	{
-		    		float histValue = histogram[pixel];
-		    		imgbytes[3*i] = (byte)(histValue*colors[colorID].getRed());
-		    		imgbytes[3*i+1] = (byte)(histValue*colors[colorID].getGreen());
-		    		imgbytes[3*i+2] = (byte)(histValue*colors[colorID].getBlue());
-		    	}
-		    }
+			    if (drawBackground || pixel != 0)
+			    {
+			    	int colorID = colors.length-1;
+			    	if (pixel != 0)
+			    	{
+			    		float histValue = histogram[pixel];
+			    		imgbytes[3*i] = (byte)(histValue*colors[colorID].getRed());
+			    		imgbytes[3*i+1] = (byte)(histValue*colors[colorID].getGreen());
+			    		imgbytes[3*i+2] = (byte)(histValue*colors[colorID].getBlue());
+			    	}
+			    }
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		// Update Joints
@@ -110,10 +130,18 @@ public class UserTracker extends Component
 	    	for (int jointIndex = 0; jointIndex < 15; ++jointIndex)
 	    	{
 	    		float[] coordsAndConf = new float[4]; // coordinates (x, y, z) and confidence
-	    		coordsAndConf[0] = user1Channel.getTuple(jointIndex).getElementFloat(0);
-	    		coordsAndConf[1] = user1Channel.getTuple(jointIndex).getElementFloat(1);
-	    		coordsAndConf[2] = user1Channel.getTuple(jointIndex).getElementFloat(2);
-	    		coordsAndConf[3] = user1Channel.getTuple(jointIndex).getElementFloat(3);
+	    		try {
+					coordsAndConf[0] = user1Channel.getTuple(jointIndex).getElementFloat(0);
+		    		coordsAndConf[1] = user1Channel.getTuple(jointIndex).getElementFloat(1);
+		    		coordsAndConf[2] = user1Channel.getTuple(jointIndex).getElementFloat(2);
+		    		coordsAndConf[3] = user1Channel.getTuple(jointIndex).getElementFloat(3);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	    		
 	    		user1Skeleton.put(jointIndex, coordsAndConf);
 	    	}

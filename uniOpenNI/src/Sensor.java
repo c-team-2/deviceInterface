@@ -1,6 +1,10 @@
 import java.nio.ByteBuffer;
 
-
+/**
+ * The interface used to retrieve and parse sensor packets from a UniDevice. 
+ * @author Greg Clark
+ *
+ */
 public class Sensor {
 	
 	private UniDevice device;
@@ -10,6 +14,10 @@ public class Sensor {
 		this.device = device;
 	}
 	
+	/**
+	 * Asks the device to construct a new sensor packet and returns the data as a SensorSnapshot.
+	 * @return the SensorSnapshot
+	 */
 	SensorSnapshot getSensorSnapshot()
 	{
 		// Get sensor packet from device driver

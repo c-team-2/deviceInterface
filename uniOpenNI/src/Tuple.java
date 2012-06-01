@@ -1,6 +1,11 @@
 
 import java.nio.ByteBuffer;
 
+/**
+ * A tuple from a Channel.
+ * @author Greg Clark
+ *
+ */
 public class Tuple {
 	private ByteBuffer data;
 	private ElementMetaData[] elementMetaData;
@@ -10,35 +15,52 @@ public class Tuple {
 		elementMetaData = elementMD;
 	}
 	
-	// TODO: Decide whether to throw exception on type mismatch
-	byte getElementByte(int index) {
+	byte getElementByte(int index) throws Exception {
+		if (elementMetaData[index].getType() != UniType.int8)
+		{
+			throw new Exception("Element is not of type byte");
+		}
 		return data.get(elementMetaData[index].getBufferIndex());
 	}
 	
-	short getElementShort(int index) {
+	short getElementShort(int index) throws Exception {
+		if (elementMetaData[index].getType() != UniType.int16)
+		{
+			throw new Exception("Element is not of type short");
+		}
 		return data.getShort(elementMetaData[index].getBufferIndex());
 	}
 	
-	int getElementInt(int index) {
+	int getElementInt(int index) throws Exception {
+		if (elementMetaData[index].getType() != UniType.int32)
+		{
+			throw new Exception("Element is not of type int");
+		}
 		return data.getInt(elementMetaData[index].getBufferIndex());
 	}
 	
-	long getElementLong(int index) {
+	long getElementLong(int index) throws Exception {
+		if (elementMetaData[index].getType() != UniType.int64)
+		{
+			throw new Exception("Element is not of type long");
+		}
 		return data.getLong(elementMetaData[index].getBufferIndex());
 	}
 	
-	float getElementFloat(int index) {
+	float getElementFloat(int index) throws Exception {
+		if (elementMetaData[index].getType() != UniType.float32)
+		{
+			throw new Exception("Element is not of type float");
+		}
 		return data.getFloat(elementMetaData[index].getBufferIndex());
 	}
 	
-	double getElementDouble(int index) {
+	double getElementDouble(int index) throws Exception {
+		if (elementMetaData[index].getType() != UniType.float64)
+		{
+			throw new Exception("Element is not of type double");
+		}
 		return data.getDouble(elementMetaData[index].getBufferIndex());
-	}
-	
-	byte[] getElementByteArray(int index) {
-		byte[] element = new byte[elementMetaData[index].getSize()];
-		data.get(element, elementMetaData[index].getBufferIndex(), elementMetaData[index].getSize());
-		return element;
 	}
 	
 	ByteBuffer getElementByteBuffer(int index) {

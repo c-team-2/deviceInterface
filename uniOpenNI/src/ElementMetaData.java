@@ -1,4 +1,9 @@
-
+/**
+ * Contains type information about an element and the position of this element
+ * in the tuple's data ByteBuffer.
+ * @author Greg Clark
+ *
+ */
 public class ElementMetaData {
 	public ElementMetaData(UniElementDescriptor descriptor, int bufferIndex) {
 		
@@ -54,17 +59,6 @@ public class ElementMetaData {
 		}
 		
 		this.bufferIndex = bufferIndex;
-	}
-	
-	enum UniType {
-		int8,
-		int16,
-		int32,
-		int64,
-		float32,
-		float64,
-		int_nonprimitive,
-		float_nonprimitive;
 	}
 	
 	private UniType type;		// Type of element
