@@ -22,10 +22,6 @@ public class UniChannel {
 	{		
 		header = new UniChannelHeader(sensorPacket);
 		
-		// Add padding before reading data
-		int padding = (8 - (sensorPacket.position() % 8)) % 8;
-		sensorPacket.position(sensorPacket.position() + padding);
-		
 		int dataSize = (int) getPackedDataSize();
 		ByteBuffer dataBuffer = sensorPacket.slice();
 		
@@ -46,12 +42,7 @@ public class UniChannel {
 	 */
 	public void packIntoByteBuffer(ByteBuffer sensorPacket) 
 	{
-		header.packIntoByteBuffer(sensorPacket);
-		
-		// Add padding before packing data
-		int padding = (8 - (sensorPacket.position() % 8)) % 8;
-		sensorPacket.position(sensorPacket.position() + padding);
-		
+		header.packIntoByteBuffer(sensorPacket);		
 		packer.writeDataIntoByteBuffer(sensorPacket.slice());
 	}
 	
@@ -92,10 +83,6 @@ public class UniChannel {
 		long dataSizeInBits = tupleSizeInBits * header.getNumberTuples();
 		long dataSize = dataSizeInBits >> 3;
 		dataSize += ((dataSizeInBits & 7) > 0 ? 1 : 0); // Add an extra byte if data doesn't end on byte boundary
-		
-		// Add padding to 64-bit word boundary
-		long padding = (8 - (dataSize % 8)) % 8;
-		dataSize += padding;
 		
 		return dataSize;
 	}

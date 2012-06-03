@@ -44,7 +44,7 @@ public class Sensor {
 		// Parse sensor packet into Channels and add to SensorSnapshot
 		int numChannels = sensorHeader.getNumChannels();
 		
-		// Decrypt the raw packet if necessary
+		// Decrypt the raw packet
 		int encryptionFlags = sensorHeader.getEncryptionFlags();
 		ByteBuffer sensorPacket =  decrypt(encryptionFlags, rawPacket);
 		

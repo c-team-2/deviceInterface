@@ -24,7 +24,7 @@ public class UniOpenNIDevice extends UniDevice {
 
 		UniChannelHeader depthHeader = new UniChannelHeader(depthNumTuples, depthFrequency, depthDescriptors, depthName);
 
-		// Create depth data
+		// Create depth data packer
 		UniDataPacker depthDataPacker = new UniDataPacker()
 				{
 					public void writeDataIntoByteBuffer(ByteBuffer buffer)
@@ -44,7 +44,6 @@ public class UniOpenNIDevice extends UniDevice {
 		addChannel(depthChannel);
 		
 		// Check if User1 is actually tracking
-		
 		HashMap<SkeletonJoint, SkeletonJointPosition> user1Skeleton = joints.get(1);
 		if (user1Skeleton != null)
 		{
@@ -60,6 +59,7 @@ public class UniOpenNIDevice extends UniDevice {
 			
 			UniChannelHeader user1Header = new UniChannelHeader(user1NumTuples, user1Frequency, user1Descriptors, user1Name);
 			
+			// Create User1 channel packer
 			UniDataPacker userDataPacker = new UniDataPacker()
 			{
 				public void writeDataIntoByteBuffer(ByteBuffer buffer)
