@@ -1,12 +1,19 @@
 package UnifyingAPI;
 
 /**
- * Contains information about an element's type and the position of this element
- * in the <code>Tuple</code>'s data <code>ByteBuffer</code>.
+ * Metadata for an element.
  * @author Greg Clark
  *
  */
 public class ElementMetaData {
+	
+	/**
+	 * Construct a metadata object from a tuple element descriptor. The caller 
+	 * must provide the index of the element in a tuple's data buffer.
+	 * @param descriptor the tuple element descriptor
+	 * @param bufferIndex the byte index in a <code>Tuple</code>'s data buffer
+	 * where the element corresponding to this metadata object begins.
+	 */
 	public ElementMetaData(UniElementDescriptor descriptor, int bufferIndex) {
 		
 		int sizeInBits = descriptor.getSize() << (descriptor.isSizedInBytes()?3:0);

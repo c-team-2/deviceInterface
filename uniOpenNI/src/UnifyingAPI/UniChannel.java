@@ -3,17 +3,16 @@ package UnifyingAPI;
 import java.nio.ByteBuffer;
 
 /**
- * A channel of raw data from the device.
+ * A channel of raw data from the device. Used for driver-side creation and 
+ * middleware-side parsing of channel packets.
  * @author Greg Clark
  *
  */
 public class UniChannel {
 	
-	public UniDataPacker packer;
+	private UniDataPacker packer;
 	private ByteBuffer data;
 	private UniChannelHeader header;
-	
-	
 	
 	/**
 	 * Construct a <code>UniChannel</code> from a sensor packet.
@@ -38,18 +37,19 @@ public class UniChannel {
 	}
 
 	/**
-	 * Write the channel packet into a <code>ByteBuffer</code> at the <code>ByteBuffer</code>'s position.
+	 * Write the channel packet into a <code>ByteBuffer</code> at the 
+	 * <code>ByteBuffer</code>'s position.
 	 * @param sensorPacket the <code>ByteBuffer</code> to write the channel packet into, 
 	 * positioned where the channel packet should start.
 	 */
-	public void packIntoByteBuffer(ByteBuffer sensorPacket) 
+	public final void packIntoByteBuffer(ByteBuffer sensorPacket) 
 	{
 		header.packIntoByteBuffer(sensorPacket);		
 		packer.writeDataIntoByteBuffer(sensorPacket.slice());
 	}
 	
 	/**
-	 * Returns the size in bytes that this channel would require if written in 
+	 * Retrieves the size in bytes that this channel requires when written in 
 	 * the channel packet format.
 	 * @return number of bytes needed to store this channel in a channel packet
 	 */
@@ -89,6 +89,15 @@ public class UniChannel {
 		return dataSize;
 	}
 	
+	/**
+	 * Retrieves the channel's data buffer.
+	 * @return the channel's data buffer
+	 */
 	public ByteBuffer getData() { return data; }
+	
+	/**
+	 * Retrieves the channel's header.
+	 * @return the channel's header
+	 */
 	public UniChannelHeader getHeader() { return header; }
 }

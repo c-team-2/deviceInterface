@@ -11,14 +11,20 @@ public class Tuple {
 	private ByteBuffer data;
 	private ElementMetaData[] elementMetaData;
 	
-	public Tuple(ByteBuffer buffer, ElementMetaData[] elementMD) {
-		data = buffer;
-		elementMetaData = elementMD;
+	/**
+	 * 
+	 * @param data a ByteBuffer containing the <code>Tuple</code>'s data
+	 * @param elementMD an array of element metadata objects, in the order 
+	 * which the elements appear in the data buffer
+	 */
+	public Tuple(ByteBuffer data, ElementMetaData[] elementMetaData) {
+		this.data = data;
+		this.elementMetaData = elementMetaData;
 	}
 	
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a byte
 	 * @throws Exception if element is not of type byte.
 	 */
@@ -32,7 +38,7 @@ public class Tuple {
 
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a short
 	 * @throws Exception if element is not of type short.
 	 */
@@ -46,7 +52,7 @@ public class Tuple {
 	
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as an int
 	 * @throws Exception if element is not of type int.
 	 */
@@ -60,7 +66,7 @@ public class Tuple {
 	
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a long
 	 * @throws Exception if element is not of type long.
 	 */
@@ -74,7 +80,7 @@ public class Tuple {
 	
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a float
 	 * @throws Exception if element is not of type float.
 	 */
@@ -88,7 +94,7 @@ public class Tuple {
 	
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a double
 	 * @throws Exception if element is not of type double.
 	 */
@@ -102,7 +108,7 @@ public class Tuple {
 	
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
-	 * @param index - the 0-based index of the element in this <code>Tuple</code>.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a ByteBuffer
 	 */
 	public ByteBuffer getElementByteBuffer(int index) {

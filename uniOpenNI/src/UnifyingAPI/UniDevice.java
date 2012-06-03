@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 /**
- * Represents a device that implements the Unified API.
+ * A device that implements the Unifying API.
  * @author Greg Clark
  *
  */
@@ -79,7 +79,7 @@ public abstract class UniDevice {
 	
 	/**
 	 * The only function that is necessary for the driver implementors to implement.
-	 * Adds each channel to the channels list using addChannel()
+	 * Adds each channel to the channels list using addChannel().
 	 */
 	protected abstract void updateChannels();
 	

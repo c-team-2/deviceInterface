@@ -3,7 +3,7 @@ package UnifyingAPI;
 import java.nio.ByteBuffer;
 
 /**
- * Representation of a data channel after parsing a channel packet.
+ * A data channel. Created by parsing a channel packet.
  *
  * @author Greg Clark
  */
@@ -19,13 +19,46 @@ public class Channel {
 	private double frequency;	// Frequency in Hz at which this channel can update
 	private String name;
 	
+	/**
+	 * Retrieves the channel's dimensions.
+	 * @return the channel's dimensions
+	 */
 	public int[] getDimensions() { return dimensions; }
+	
+	/**
+	 * Retrieves the size of a tuple in this channel in bytes.
+	 * @return the size (in bytes) of a tuple
+	 */
 	public int getTupleSize() { return tupleSize; }
+	
+	/**
+	 * Retrieves the number of tuples in this channel.
+	 * @return the number of tuples in this channel.
+	 */
 	public long getNumberOfTuples() { return numTuples; }
+	
+	/**
+	 * Retrieves an array of the metadata of the elements in a tuple.
+	 * @return the array of metadata objects per element in a tuple
+	 */
 	public ElementMetaData[] getElementMetaData() { return elementMetaData; }
+	
+	/**
+	 * Retrieves the frequency in Hz at which this channel can be updated.
+	 * @return the frequency in Hz of the channel.
+	 */
 	public double getFrequency() { return frequency; }
+	
+	/**
+	 * Retrievs the name of the channel.
+	 * @return the name of the channel.
+	 */
 	public String getName() { return name; }
 	
+	/**
+	 * Constructs a Channel from a {@link UnifyingAPI.UniChannel <code>UniChannel</code>}
+	 * @param uniChannel the <code>UniChannel</code> from which to construct a <code>Channel</code>
+	 */
 	public Channel(UniChannel uniChannel) {
 		UniChannelHeader header = uniChannel.getHeader();
 		UniElementDescriptor descriptors[] = header.getElementDescriptors();

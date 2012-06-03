@@ -3,7 +3,7 @@ package UnifyingAPI;
 import java.nio.ByteBuffer;
 
 /**
- * Represents the header of a channel packet.
+ * The header of a channel packet.
  * @author Greg Clark
  *
  */
@@ -14,9 +14,30 @@ public class UniChannelHeader {
 	private UniElementDescriptor elementDescriptors[];
 	private String name;
 	
+	/**
+	 * Retrieves the number of tuples in this channel
+	 * @return the number of tuple in this channel
+	 */
 	public long getNumberTuples() { return numTuples; }
+	
+	/**
+	 * Retrieves the frequency in Hz at which this channel updates
+	 * @return the frequency in Hz at which this channel updates
+	 */
 	public double getFrequency() { return frequency; }
+	
+	/**
+	 * Retrieves the array of tuple element descriptors, in the same order that 
+	 * the corresponding elements appear in a tuple in this channel.
+	 * @return the array of tuple element descriptors, ordered by the order in 
+	 * which the corresponding elements appear in a tuple.
+	 */
 	public UniElementDescriptor[] getElementDescriptors() { return elementDescriptors; }
+	
+	/**
+	 * Retrieves the name of the channel
+	 * @return the name of the channel
+	 */
 	public String getName() { return name; }
 	
 	/**
@@ -46,6 +67,14 @@ public class UniChannelHeader {
 		name = buffer.toString();
 	}
 	
+	/**
+	 * Construct a channel header with the given characteristics.
+	 * @param numTuples the number of tuples in the channel 
+	 * @param frequency the frequency in Hz at which the channel updates
+	 * @param elementDescriptors an array of element descriptors, ordered by how 
+	 * the corresponding elements appear in a tuple
+	 * @param name the name of the channel
+	 */
 	public UniChannelHeader(long numTuples, double frequency,
 			UniElementDescriptor elementDescriptors[], String name)
 	{
@@ -57,7 +86,7 @@ public class UniChannelHeader {
 	}
 	
 	/**
-	 * Write the channel packet header into a <code>ByteBuffer</code> at the <code>ByteBuffer</code>'s position.
+	 * Writes the channel packet header into a <code>ByteBuffer</code> at the <code>ByteBuffer</code>'s position.
 	 * @param sensorPacket the <code>ByteBuffer</code> to write the channel packet into, 
 	 * positioned where the channel packet should start.
 	 */
@@ -81,7 +110,7 @@ public class UniChannelHeader {
 	}
 	
 	/**
-	 * Returns the size in bytes that this channel header would require if written in 
+	 * Retrieves the size in bytes that this channel header would require if written in 
 	 * the channel packet format.
 	 * @return number of bytes needed to store this channel header in a channel packet
 	 */

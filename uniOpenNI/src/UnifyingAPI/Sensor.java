@@ -9,6 +9,13 @@ import java.nio.ByteBuffer;
  */
 public class Sensor {
 	
+	private UniDevice device;
+	
+	public Sensor(UniDevice device)
+	{
+		this.device = device;
+	}
+	
 	/**
 	 * Dummy function to be implemented later for decrypting the sensor packet
 	 * @param encryptedBuffer
@@ -18,13 +25,6 @@ public class Sensor {
 	private ByteBuffer decrypt(int encryptionFlags, ByteBuffer encryptedBuffer)
 	{
 		return encryptedBuffer;
-	}
-	
-	private UniDevice device;
-	
-	public Sensor(UniDevice device)
-	{
-		this.device = device;
 	}
 	
 	/**

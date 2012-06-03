@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * The container for parsed sensor packet data.
+ * A container for parsed sensor packet data.
  * @author Greg Clark
  *
  */
@@ -23,7 +23,7 @@ public class SensorSnapshot {
 	/**
 	 * Returns the timestamp in the sensor packet from which this 
 	 * <code>SensorSnapshot</code> was constructed.
-	 * @return the Date of when the device's sensor packet was constructed.
+	 * @return the <code>Date</code> when the device's sensor packet was constructed.
 	 */
 	public Date getTimestamp() { return timestamp; }
 	
@@ -37,15 +37,16 @@ public class SensorSnapshot {
 	}
 	
 	/**
-	 * 
-	 * @return the <code>Sensor</code> that created this <code>SensorSnapshot</code>.
+	 * Retrieves the <code>Sensor</code> that created this <code>SensorSnapshot</code>.
+	 * @return the <code>Sensor</code> that created this <code>SensorSnapshot</code>
 	 */
 	public Sensor getSensor() { return sensor; }
 	
 	/**
-	 * 
+	 * Retrieves the <code>Channel</code> with the given name.
 	 * @param name name of the <code>Channel</code> to get.
-	 * @return the <code>Channel</code>, null if there is no <code>Channel</code> with the given name.
+	 * @return the <code>Channel</code>, <code>null</code> if there is no 
+	 * <code>Channel</code> with the given name.
 	 */
 	public Channel getChannel(String name) { return channels.get(name); }
 }
