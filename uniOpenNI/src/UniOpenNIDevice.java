@@ -25,20 +25,26 @@ public class UniOpenNIDevice extends UniDevice {
 		UniChannelHeader depthHeader = new UniChannelHeader(depthNumTuples, depthFrequency, depthDescriptors, depthName);
 
 		// Create depth data
-		ByteBuffer depthData = ByteBuffer.allocateDirect(depthMD.getDataSize());
-		int numPixels = depth.getXRes() * depth.getYRes();
-		ShortBuffer depthBuffer = depth.createShortBuffer();
-		for (int i = 0; i < numPixels; ++i)
-		{
-			short value = depthBuffer.get();
-			depthData.putShort(value);
-		}
+		UniDataPacker depthDataPacker = new UniDataPacker()
+				{
+					public void writeDataIntoByteBuffer(ByteBuffer buffer)
+					{
+						ShortBuffer depthBuffer = depth.createShortBuffer();
+						int numPixels = depth.getXRes() * depth.getYRes();
+						for (int i = 0; i < numPixels; ++i)
+						{
+							short value = depthBuffer.get();
+							buffer.putShort(value);
+						}
+					}
+				};
 		
 		// Create and add depth channel
-		UniChannel depthChannel = new UniChannel(depthHeader, depthData);
+		UniChannel depthChannel = new UniChannel(depthHeader, depthDataPacker);
 		addChannel(depthChannel);
 		
 		// Check if User1 is actually tracking
+		
 		HashMap<SkeletonJoint, SkeletonJointPosition> user1Skeleton = joints.get(1);
 		if (user1Skeleton != null)
 		{
@@ -54,26 +60,30 @@ public class UniOpenNIDevice extends UniDevice {
 			
 			UniChannelHeader user1Header = new UniChannelHeader(user1NumTuples, user1Frequency, user1Descriptors, user1Name);
 			
-			// Create User1 data
-			ByteBuffer user1Data =  ByteBuffer.allocate(4 * 4 * 15);
-			float value = 0.0f;
-			for (int i = 0; i < 15; ++i)	
+			UniDataPacker userDataPacker = new UniDataPacker()
 			{
-				SkeletonJointPosition pos = joints.get(1).get(jointArray[i]);
-				Point3D pos3D;
-				pos3D = pos.getPosition();
-				value = pos3D.getX();
-				user1Data.putFloat(value);
-				value = pos3D.getY();
-				user1Data.putFloat(value);
-				value = pos3D.getZ();
-				user1Data.putFloat(value);
-				value = pos.getConfidence();
-				user1Data.putFloat(value);
-			}
+				public void writeDataIntoByteBuffer(ByteBuffer buffer)
+				{
+					float value = 0.0f;
+					for (int i = 0; i < 15; ++i)	
+					{
+						SkeletonJointPosition pos = joints.get(1).get(jointArray[i]);
+						Point3D pos3D;
+						pos3D = pos.getPosition();
+						value = pos3D.getX();
+						buffer.putFloat(value);
+						value = pos3D.getY();
+						buffer.putFloat(value);
+						value = pos3D.getZ();
+						buffer.putFloat(value);
+						value = pos.getConfidence();
+						buffer.putFloat(value);
+					}
+				}
+			};
 			
 			// Create User1 channel and add to channels
-			UniChannel user1Channel = new UniChannel(user1Header, user1Data);
+			UniChannel user1Channel = new UniChannel(user1Header, userDataPacker);
 			addChannel(user1Channel);
 		}
 	}

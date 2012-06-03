@@ -6,15 +6,20 @@ import java.nio.ByteBuffer;
  *
  */
 public class UniChannel {
+	
+	public UniDataPacker packer;
 	private ByteBuffer data;
 	private UniChannelHeader header;
+	
+	
 	
 	/**
 	 * Construct a <code>UniChannel</code> from a sensor packet.
 	 * @param sensorPacket the <code>ByteBuffer</code> containing the sensor packet, 
 	 * with its position where the channel header starts
 	 */
-	public UniChannel(ByteBuffer sensorPacket) {		
+	public UniChannel(ByteBuffer sensorPacket) 
+	{		
 		header = new UniChannelHeader(sensorPacket);
 		
 		// Add padding before reading data
@@ -26,10 +31,12 @@ public class UniChannel {
 		
 		data = (ByteBuffer) dataBuffer.limit(dataSize);
 	}
-	
-	public UniChannel(UniChannelHeader header, ByteBuffer data) {		
+
+
+	public UniChannel(UniChannelHeader header,
+			UniDataPacker dataPacker) {
 		this.header = header;
-		this.data = data;
+		this.packer = dataPacker;
 	}
 
 	/**
@@ -45,8 +52,7 @@ public class UniChannel {
 		int padding = (8 - (sensorPacket.position() % 8)) % 8;
 		sensorPacket.position(sensorPacket.position() + padding);
 		
-		data.rewind();
-		sensorPacket.put(data);
+		packer.writeDataIntoByteBuffer(sensorPacket.slice());
 	}
 	
 	/**

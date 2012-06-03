@@ -44,7 +44,6 @@ public abstract class UniDevice {
 		ByteBuffer buffer = ByteBuffer.allocateDirect(sensorPacketSize);
 		
 		// Pack the sensor packet into the buffer
-		buffer.rewind();
 		sensorHeader.packIntoByteBuffer(buffer);
 		int packedSize = sensorHeader.getPackedSize();
 		
