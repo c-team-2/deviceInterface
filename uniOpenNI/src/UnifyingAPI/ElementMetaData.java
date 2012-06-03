@@ -1,3 +1,5 @@
+package UnifyingAPI;
+
 /**
  * Contains information about an element's type and the position of this element
  * in the <code>Tuple</code>'s data <code>ByteBuffer</code>.

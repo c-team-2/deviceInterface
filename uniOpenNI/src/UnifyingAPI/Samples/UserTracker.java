@@ -1,5 +1,6 @@
+package UnifyingAPI.Samples;
 import org.OpenNI.*;
-
+import UnifyingAPI.*;
 import java.util.HashMap;
 import java.awt.*;
 import java.awt.color.ColorSpace;

@@ -1,3 +1,5 @@
+package UnifyingAPI;
+
 /**
  * Represents a tuple element descriptor.
  * @author Greg Clark

@@ -1,3 +1,5 @@
+package UnifyingAPI;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -17,12 +19,12 @@ public class Channel {
 	private double frequency;	// Frequency in Hz at which this channel can update
 	private String name;
 	
-	int[] getDimensions() { return dimensions; }
-	int getTupleSize() { return tupleSize; }
-	long getNumberOfTuples() { return numTuples; }
-	ElementMetaData[] getElementMetaData() { return elementMetaData; }
-	double getFrequency() { return frequency; }
-	String getName() { return name; }
+	public int[] getDimensions() { return dimensions; }
+	public int getTupleSize() { return tupleSize; }
+	public long getNumberOfTuples() { return numTuples; }
+	public ElementMetaData[] getElementMetaData() { return elementMetaData; }
+	public double getFrequency() { return frequency; }
+	public String getName() { return name; }
 	
 	public Channel(UniChannel uniChannel) {
 		UniChannelHeader header = uniChannel.getHeader();

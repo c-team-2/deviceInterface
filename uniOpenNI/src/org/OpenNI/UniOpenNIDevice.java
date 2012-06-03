@@ -1,8 +1,9 @@
+package org.OpenNI;
+import UnifyingAPI.*;
+
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
-
-import org.OpenNI.*;
 
 
 public class UniOpenNIDevice extends UniDevice {
@@ -30,12 +31,7 @@ public class UniOpenNIDevice extends UniDevice {
 					public void writeDataIntoByteBuffer(ByteBuffer buffer)
 					{
 						ShortBuffer depthBuffer = depth.createShortBuffer();
-						int numPixels = depth.getXRes() * depth.getYRes();
-						for (int i = 0; i < numPixels; ++i)
-						{
-							short value = depthBuffer.get();
-							buffer.putShort(value);
-						}
+						buffer.asShortBuffer().put(depthBuffer);
 					}
 				};
 		

@@ -1,3 +1,5 @@
+package UnifyingAPI;
+
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
@@ -8,7 +10,7 @@ import java.util.LinkedList;
  */
 public abstract class UniDevice {
 	
-	UniDevice()
+	protected UniDevice()
 	{
 		this.encryptor = new UniCrypt();
 		this.channels = new LinkedList<UniChannel>();
@@ -41,7 +43,7 @@ public abstract class UniDevice {
 		int sensorPacketSize = sensorHeaderSize + channelSize;
 		
 		// Allocate the ByteBuffer
-		ByteBuffer buffer = ByteBuffer.allocateDirect(sensorPacketSize);
+		ByteBuffer buffer = ByteBuffer.allocate(sensorPacketSize);
 		
 		// Pack the sensor packet into the buffer
 		sensorHeader.packIntoByteBuffer(buffer);
@@ -52,7 +54,7 @@ public abstract class UniDevice {
 		{
 			UniChannel channel = channels.get(channelCount);
 			buffer.position(packedSize);
-			channel.packIntoByteBuffer(buffer);
+			channel.packIntoByteBuffer(buffer.slice());
 			packedSize += channel.getPackedSize();
 		}
 		
