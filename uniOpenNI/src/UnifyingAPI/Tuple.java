@@ -14,7 +14,7 @@ public class Tuple {
 	/**
 	 * 
 	 * @param data a ByteBuffer containing the <code>Tuple</code>'s data
-	 * @param elementMD an array of element metadata objects, in the order 
+	 * @param elementMetaData an array of element metadata objects, in the order 
 	 * which the elements appear in the data buffer
 	 */
 	public Tuple(ByteBuffer data, ElementMetaData[] elementMetaData) {
