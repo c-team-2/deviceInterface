@@ -2,16 +2,19 @@ package UnifyingAPI;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A container for parsed sensor packet data.
- * @author Greg Clark
+ * @author Greg Clark, Richard Yu
  *
  */
 public class SensorSnapshot {
 	private Sensor sensor;
 	private Date timestamp;
 	private HashMap<String, Channel> channels;
+	
 	
 	public SensorSnapshot(Sensor sensor, UniSensorHeader sensorHeader)
 	{
@@ -49,4 +52,16 @@ public class SensorSnapshot {
 	 * <code>Channel</code> with the given name.
 	 */
 	public Channel getChannel(String name) { return channels.get(name); }
+	
+	/**
+	 * Retrieves a <code>Set</code> containing the names of each channel
+	 * present in the SensorSnapshot
+	 * @return the <code>Set</code>, of channel names.
+	 */
+	public Set<String> getChannelNames()
+	{
+		//Create a copy to ensure no damage is done to the actual key Set
+		Set<String> s = new HashSet<String>(channels.keySet());
+		return s;
+	}
 }

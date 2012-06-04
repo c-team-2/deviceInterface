@@ -69,6 +69,27 @@ public abstract class UniDevice {
 	}
 	
 	/**
+	 * Retrieves the sensor packet header for this device.
+	 * @return the sensor packet header as a byte array
+	 */
+	public byte[] getSensorHeader() {
+		// Create sensor header with no channels
+		UniSensorHeader sensorHeader = new UniSensorHeader((byte)1, vendorID, 
+				productID, (short) 0, System.currentTimeMillis(), frequency, encryptionFlags);
+		
+		// Pack sensor header into ByteBuffer
+		ByteBuffer header = ByteBuffer.allocate(sensorHeader.getPackedSize());
+		sensorHeader.packIntoByteBuffer(header);
+		
+		// Create and return byte array
+		byte[] headerByteArray = new byte[sensorHeader.getPackedSize()];
+		header.rewind();
+		header.get(headerByteArray);
+		
+		return headerByteArray;
+	}
+	
+	/**
 	 * Add a UniChannel to the channels list.
 	 * @param channel the UniChannel to add to the list
 	 */

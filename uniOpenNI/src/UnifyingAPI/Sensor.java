@@ -4,16 +4,31 @@ import java.nio.ByteBuffer;
 
 /**
  * The interface used to retrieve and parse sensor packets from a <code>UniDevice</code>. 
- * @author Greg Clark
+ * @author Greg Clark, Richard Yu
  *
  */
 public class Sensor {
 	
 	private UniDevice device;
+	private byte APIversion;
+	private short vendorID;
+	private short productID;
+	private double frequency;
 	
+	/**
+	 * Constructs a Sensor from a UniDevice. Will block while waiting to get a 
+	 * sensor packet header from the device.
+	 * @param device
+	 */
 	public Sensor(UniDevice device)
 	{
 		this.device = device;
+		byte[] sensorPacketHeader = this.device.getSensorHeader();
+		UniSensorHeader header = new UniSensorHeader(ByteBuffer.wrap(sensorPacketHeader));
+		this.APIversion = header.getVersion();
+		this.vendorID = header.getVendorID();
+		this.productID = header.getProductID();
+		this.frequency = header.getFrequency();
 	}
 	
 	/**
@@ -66,4 +81,28 @@ public class Sensor {
 		
 		return snapshot;
 	}
+	
+	/**
+	 * Retrieves the version number of the Unifying API being used.
+	 * @return the version number of the API
+	 */
+	public byte getAPIVersion() { return APIversion; }
+	
+	/**
+	 * Retrieves the vendor ID of the device.
+	 * @return the vendor ID of the device
+	 */
+	public short getVendorID() { return vendorID; }
+	
+	/**
+	 * Retrieves the product ID of the device.
+	 * @return the product ID of the device
+	 */
+	public short getProductID() { return productID; }
+	
+	/**
+	 * Retrieves the highest update frequency in Hz among all the channels .
+	 * @return the highest update frequency in Hz
+	 */
+	public double getFrequency() { return frequency; }
 }
