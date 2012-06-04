@@ -14,6 +14,7 @@ public class Sensor {
 	private short vendorID;
 	private short productID;
 	private double frequency;
+	private UniCrypt decryptor;
 	
 	/**
 	 * Constructs a Sensor from a UniDevice. Will block while waiting to get a 
@@ -29,17 +30,7 @@ public class Sensor {
 		this.vendorID = header.getVendorID();
 		this.productID = header.getProductID();
 		this.frequency = header.getFrequency();
-	}
-	
-	/**
-	 * Dummy function to be implemented later for decrypting the sensor packet
-	 * @param encryptedBuffer
-	 * @param encryptionFlags
-	 * @return
-	 */
-	private ByteBuffer decrypt(int encryptionFlags, ByteBuffer encryptedBuffer)
-	{
-		return encryptedBuffer;
+		this.decryptor = null;
 	}
 	
 	/**
@@ -62,8 +53,14 @@ public class Sensor {
 		int numChannels = sensorHeader.getNumChannels();
 		
 		// Decrypt the raw packet
-		int encryptionFlags = sensorHeader.getEncryptionFlags();
-		ByteBuffer sensorPacket =  decrypt(encryptionFlags, rawPacket);
+		ByteBuffer sensorPacket;
+		if (decryptor != null)
+		{
+			int encryptionFlags = sensorHeader.getEncryptionFlags();
+			sensorPacket =  decryptor.decrypt(encryptionFlags, rawPacket);
+		}
+		else
+			sensorPacket = rawPacket;
 		
 		int readBytes = sensorHeader.getPackedSize(); // number of bytes read so far
 		for (int channelCount = 0; channelCount < numChannels; ++channelCount)
@@ -105,4 +102,13 @@ public class Sensor {
 	 * @return the highest update frequency in Hz
 	 */
 	public double getFrequency() { return frequency; }
+	
+	/**
+	 * Sets the decryptor to use on encrypted sensor packets.
+	 * @param decryptor the decryptor to use
+	 */
+	public void setDecryptor(UniCrypt decryptor)
+	{
+		this.decryptor = decryptor;
+	}
 }

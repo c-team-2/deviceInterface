@@ -14,6 +14,7 @@ public abstract class UniDevice {
 	{
 		this.encryptor = new UniCrypt();
 		this.channels = new LinkedList<UniChannel>();
+		this.encryptionFlags = 0;
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public abstract class UniDevice {
 		
 		// Encrypt the buffer
 		buffer.rewind();
-		ByteBuffer encryptedBuffer = encryptor.encrypt(buffer);
+		ByteBuffer encryptedBuffer = encryptor.encrypt(encryptionFlags, buffer);
 		
 		// Create and return the byte array
 		byte[] sensorPacket = new byte[encryptedBuffer.capacity()];

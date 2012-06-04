@@ -9,14 +9,13 @@ import java.nio.ByteBuffer;
  */
 public class UniCrypt {
 	
-	public ByteBuffer decrypt(ByteBuffer encryptedBuffer)
-	{
-		return encryptedBuffer;
-	}
-	
-	public ByteBuffer encrypt(ByteBuffer rawBuffer)
+	public ByteBuffer encrypt(int encryptionFlags, ByteBuffer rawBuffer)
 	{
 		return rawBuffer;
+	}
+
+	public ByteBuffer decrypt(int encryptionFlags, ByteBuffer encryptedBuffer) {
+		return encryptedBuffer;
 	}
 
 }
