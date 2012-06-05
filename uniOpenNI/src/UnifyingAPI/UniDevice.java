@@ -10,10 +10,13 @@ import java.util.LinkedList;
  */
 public abstract class UniDevice {
 	
-	protected UniDevice()
+	protected UniDevice(short vendorID, short productID, double frequency)
 	{
 		this.encryptor = new UniCrypt();
 		this.channels = new LinkedList<UniChannel>();
+		this.vendorID = vendorID;
+		this.productID = productID;
+		this.frequency = frequency;
 		this.encryptionFlags = 0;
 	}
 	

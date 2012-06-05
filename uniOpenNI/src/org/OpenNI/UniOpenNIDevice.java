@@ -12,7 +12,6 @@ public class UniOpenNIDevice extends UniDevice {
 		try {
 			updateAll();
 		} catch (StatusException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -85,7 +84,7 @@ public class UniOpenNIDevice extends UniDevice {
 	}
 	
 	public UniOpenNIDevice() {
-		super();
+		super((short)0x045e, (short) 0x02ae, 30.0d);
 		try {
 			scriptNode = new OutArg<ScriptNode>();
 			context = Context.createFromXmlFile(SAMPLE_XML_FILE, scriptNode);
