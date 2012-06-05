@@ -10,6 +10,12 @@ import java.util.LinkedList;
  */
 public abstract class UniDevice {
 	
+	/**
+	 * Device driver devlopers should call this constructor when they subclass <code>UniDevice</code>
+	 * @param vendorID the USB vendor ID for the device
+	 * @param productID the USB product ID for the device
+	 * @param frequency the highest update frequency among all data channels
+	 */
 	protected UniDevice(short vendorID, short productID, double frequency)
 	{
 		this.encryptor = new UniCrypt();
