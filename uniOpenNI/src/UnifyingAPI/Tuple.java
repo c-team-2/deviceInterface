@@ -35,6 +35,40 @@ public class Tuple {
 		}
 		return data.get(elementMetaData[index].getBufferIndex());
 	}
+	
+	/**
+	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * to a byte. Returns 0 if the element is a nonprimitive type.
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
+	 * @return the element casted to a byte
+	 */
+	public byte getElementCastedToByte(int index) {
+		byte element = 0;
+		
+		switch (elementMetaData[index].getType())
+		{
+		case int8:
+			element = data.get(elementMetaData[index].getBufferIndex());
+			break;
+		case int16:
+			element = (byte) data.getShort(elementMetaData[index].getBufferIndex());
+			break;
+		case int32:
+			element = (byte) data.getInt(elementMetaData[index].getBufferIndex());
+			break;
+		case int64:
+			element = (byte) data.getLong(elementMetaData[index].getBufferIndex());
+			break;
+		case float32:
+			element = (byte) data.getFloat(elementMetaData[index].getBufferIndex());
+			break;
+		case float64:
+			element = (byte) data.getDouble(elementMetaData[index].getBufferIndex());
+			break;
+		}
+		
+		return element;
+	}
 
 	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
@@ -48,6 +82,40 @@ public class Tuple {
 			throw new Exception("Element is not of type short");
 		}
 		return data.getShort(elementMetaData[index].getBufferIndex());
+	}
+	
+	/**
+	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * to a short. Returns 0 if the element is a nonprimitive type
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
+	 * @return the element casted to a short
+	 */
+	public short getElementCastedToShort(int index) {
+		short element = 0;
+		
+		switch (elementMetaData[index].getType())
+		{
+		case int8:
+			element = (short) data.get(elementMetaData[index].getBufferIndex());
+			break;
+		case int16:
+			element = data.getShort(elementMetaData[index].getBufferIndex());
+			break;
+		case int32:
+			element = (short) data.getInt(elementMetaData[index].getBufferIndex());
+			break;
+		case int64:
+			element = (short) data.getLong(elementMetaData[index].getBufferIndex());
+			break;
+		case float32:
+			element = (short) data.getFloat(elementMetaData[index].getBufferIndex());
+			break;
+		case float64:
+			element = (short) data.getDouble(elementMetaData[index].getBufferIndex());
+			break;
+		}
+		
+		return element;
 	}
 	
 	/**
@@ -65,6 +133,40 @@ public class Tuple {
 	}
 	
 	/**
+	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * to a short. Returns 0 if the element is a nonprimitive type
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
+	 * @return the element casted to a short
+	 */
+	public int getElementCastedToInt(int index) {
+		int element = 0;
+		
+		switch (elementMetaData[index].getType())
+		{
+		case int8:
+			element = (int) data.get(elementMetaData[index].getBufferIndex());
+			break;
+		case int16:
+			element = (int) data.getShort(elementMetaData[index].getBufferIndex());
+			break;
+		case int32:
+			element = data.getInt(elementMetaData[index].getBufferIndex());
+			break;
+		case int64:
+			element = (int) data.getLong(elementMetaData[index].getBufferIndex());
+			break;
+		case float32:
+			element = (int) data.getFloat(elementMetaData[index].getBufferIndex());
+			break;
+		case float64:
+			element = (int) data.getDouble(elementMetaData[index].getBufferIndex());
+			break;
+		}
+		
+		return element;
+	}
+	
+	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a long
@@ -76,6 +178,40 @@ public class Tuple {
 			throw new Exception("Element is not of type long");
 		}
 		return data.getLong(elementMetaData[index].getBufferIndex());
+	}
+	
+	/**
+	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * to a short. Returns 0 if the element is a nonprimitive type
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
+	 * @return the element casted to a short
+	 */
+	public long getElementCastedToLong(int index) {
+		long element = 0;
+		
+		switch (elementMetaData[index].getType())
+		{
+		case int8:
+			element = (long) data.get(elementMetaData[index].getBufferIndex());
+			break;
+		case int16:
+			element = (long) data.getShort(elementMetaData[index].getBufferIndex());
+			break;
+		case int32:
+			element = (long) data.getInt(elementMetaData[index].getBufferIndex());
+			break;
+		case int64:
+			element = data.getLong(elementMetaData[index].getBufferIndex());
+			break;
+		case float32:
+			element = (long) data.getFloat(elementMetaData[index].getBufferIndex());
+			break;
+		case float64:
+			element = (long) data.getDouble(elementMetaData[index].getBufferIndex());
+			break;
+		}
+		
+		return element;
 	}
 	
 	/**
@@ -93,6 +229,40 @@ public class Tuple {
 	}
 	
 	/**
+	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * to a short. Returns 0 if the element is a nonprimitive type
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
+	 * @return the element casted to a short
+	 */
+	public float getElementCastedToFloat(int index) {
+		float element = 0;
+		
+		switch (elementMetaData[index].getType())
+		{
+		case int8:
+			element = (float) data.get(elementMetaData[index].getBufferIndex());
+			break;
+		case int16:
+			element = (float) data.getShort(elementMetaData[index].getBufferIndex());
+			break;
+		case int32:
+			element = (float) data.getInt(elementMetaData[index].getBufferIndex());
+			break;
+		case int64:
+			element = (float) data.getLong(elementMetaData[index].getBufferIndex());
+			break;
+		case float32:
+			element = (float) data.getFloat(elementMetaData[index].getBufferIndex());
+			break;
+		case float64:
+			element = (float) data.getDouble(elementMetaData[index].getBufferIndex());
+			break;
+		}
+		
+		return element;
+	}
+	
+	/**
 	 * Returns the element at the given index in this <code>Tuple</code>.
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
 	 * @return the element as a double
@@ -104,6 +274,40 @@ public class Tuple {
 			throw new Exception("Element is not of type double");
 		}
 		return data.getDouble(elementMetaData[index].getBufferIndex());
+	}
+	
+	/**
+	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * to a short. Returns 0 if the element is a nonprimitive type
+	 * @param index the 0-based index of the element in this <code>Tuple</code>.
+	 * @return the element casted to a short
+	 */
+	public double getElementCastedToDouble(int index) {
+		double element = 0;
+		
+		switch (elementMetaData[index].getType())
+		{
+		case int8:
+			element = (double) data.get(elementMetaData[index].getBufferIndex());
+			break;
+		case int16:
+			element = (double) data.getShort(elementMetaData[index].getBufferIndex());
+			break;
+		case int32:
+			element = (double) data.getInt(elementMetaData[index].getBufferIndex());
+			break;
+		case int64:
+			element = (double) data.getLong(elementMetaData[index].getBufferIndex());
+			break;
+		case float32:
+			element = (double) data.getFloat(elementMetaData[index].getBufferIndex());
+			break;
+		case float64:
+			element = data.getDouble(elementMetaData[index].getBufferIndex());
+			break;
+		}
+		
+		return element;
 	}
 	
 	/**
