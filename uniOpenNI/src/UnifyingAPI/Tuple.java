@@ -37,12 +37,12 @@ public class Tuple {
 	}
 	
 	/**
-	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * Returns the element at the given index in this <code>Tuple</code> cast 
 	 * to a <code>byte</code>. Returns 0 if the element is a nonprimitive type.
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
-	 * @return the element casted to a <code>byte</code>
+	 * @return the element cast to a <code>byte</code>
 	 */
-	public byte getElementCastedToByte(int index) {
+	public byte getElementCastToByte(int index) {
 		byte element = 0;
 		
 		switch (elementMetaData[index].getType())
@@ -85,12 +85,12 @@ public class Tuple {
 	}
 	
 	/**
-	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * Returns the element at the given index in this <code>Tuple</code> cast 
 	 * to a <code>short</code>. Returns 0 if the element is a nonprimitive type
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
-	 * @return the element casted to a <code>short</code>
+	 * @return the element cast to a <code>short</code>
 	 */
-	public short getElementCastedToShort(int index) {
+	public short getElementCastToShort(int index) {
 		short element = 0;
 		
 		switch (elementMetaData[index].getType())
@@ -133,12 +133,12 @@ public class Tuple {
 	}
 	
 	/**
-	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * Returns the element at the given index in this <code>Tuple</code> cast 
 	 * to an <code>int</code>. Returns 0 if the element is a nonprimitive type
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
-	 * @return the element casted to an <code>int</code>
+	 * @return the element cast to an <code>int</code>
 	 */
-	public int getElementCastedToInt(int index) {
+	public int getElementCastToInt(int index) {
 		int element = 0;
 		
 		switch (elementMetaData[index].getType())
@@ -181,12 +181,12 @@ public class Tuple {
 	}
 	
 	/**
-	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * Returns the element at the given index in this <code>Tuple</code> cast 
 	 * to a <code>long</code>. Returns 0 if the element is a nonprimitive type
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
-	 * @return the element casted to a <code>long</code>
+	 * @return the element cast to a <code>long</code>
 	 */
-	public long getElementCastedToLong(int index) {
+	public long getElementCastToLong(int index) {
 		long element = 0;
 		
 		switch (elementMetaData[index].getType())
@@ -229,12 +229,12 @@ public class Tuple {
 	}
 	
 	/**
-	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * Returns the element at the given index in this <code>Tuple</code> cast 
 	 * to a <code>float</code>. Returns 0 if the element is a nonprimitive type
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
-	 * @return the element casted to a <code>float</code>
+	 * @return the element cast to a <code>float</code>
 	 */
-	public float getElementCastedToFloat(int index) {
+	public float getElementCastToFloat(int index) {
 		float element = 0;
 		
 		switch (elementMetaData[index].getType())
@@ -277,12 +277,12 @@ public class Tuple {
 	}
 	
 	/**
-	 * Returns the element at the given index in this <code>Tuple</code> casted 
+	 * Returns the element at the given index in this <code>Tuple</code> cast 
 	 * to a <code>double</code>. Returns 0 if the element is a nonprimitive type
 	 * @param index the 0-based index of the element in this <code>Tuple</code>.
-	 * @return the element casted to a <code>double</code>
+	 * @return the element cast to a <code>double</code>
 	 */
-	public double getElementCastedToDouble(int index) {
+	public double getElementCastToDouble(int index) {
 		double element = 0;
 		
 		switch (elementMetaData[index].getType())
