@@ -88,17 +88,46 @@ public class Channel {
 		this.dimProducts[0] = this.tupleSize;
 		
 		// Parse data
-		// TODO: assuming given sensor packet is byte aligned per element, just using given bytebuffer
-		this.data = uniChannel.getData();
+		// assuming given sensor packet is byte aligned per element
+		// need to convert 3, 5, 6, and 7 byte integers into primitives
+		this.data = ByteBuffer.allocate((int) (tupleSize * numTuples));
+		int bytesRead = 0;
+		int bytesWritten = 0;
+		ByteBuffer originalData = uniChannel.getData();
+		for (int tupleCount = 0; tupleCount < numTuples; ++tupleCount)
+		{
+			for (int elementCount = 0; elementCount < elementMetaData.length; ++elementCount)
+			{
+				originalData.position(bytesRead);
+				this.data.position(bytesWritten);
+				
+				// Create element ByteBuffer
+				ByteBuffer element = originalData.slice();
+				int packedSize = descriptors[elementCount].getSize();
+				element.limit(packedSize);
+				
+				// Write null bytes to highest order bytes if necessary
+				int numNullBytes = elementMetaData[elementCount].getSize() - packedSize;
+				ByteBuffer nullBytes = ByteBuffer.allocate(numNullBytes);
+				this.data.put(nullBytes);
+				
+				// Write element to parsed data buffer
+				this.data.put(element);
+				
+				// Increment byte counts
+				bytesRead += packedSize;
+				bytesWritten += elementMetaData[elementCount].getSize();
+			}
+		}
 	}
 
 	/**
 	 * Sets the dimensions of the channel. Returns true if properly set
 	 * @param args the new dimensions to set. The final dimension should be the one closest together in memory
 	 * @return true if and only if product of args is equal to this channel's number of Tuples
+	 * @throws Exception if the product of the given dimensions does not equal the number of tuples in the channel
 	 */
-	//TODO: throw exception instead of returning?
-	public boolean setDimensions(int... args)
+	public void setDimensions(int... args) throws Exception
 	{
 		int dimensionProducts[] = new int[args.length];
 		dimensionProducts[args.length-1] = this.tupleSize;
@@ -109,7 +138,7 @@ public class Channel {
 		// Check if final product of dimensions is equal to the number of Tuples in this channel
 		if (dimensionProducts[0] / tupleSize != this.numTuples)
 		{
-			return false;
+			throw new Exception("The given dimensions do not match the number of tuples");
 		}
 		else
 		{
@@ -119,8 +148,6 @@ public class Channel {
 				this.dimProducts[i] = dimensionProducts[i];
 			}
 		}
-		
-		return true;
 	}
 	
 	/** 
@@ -131,7 +158,7 @@ public class Channel {
 	 *  <code>Channel</code>'s dimensionality or if the calculated index is too high
 	 */
 	public Tuple getTuple(int... indices) throws IllegalArgumentException {
-		// TODO: Decide whether to check bounds of each dimension or just final index
+		// Throw an exception if too many arguments
 		if (indices.length > dimensions.length)
 		{
 			String message = String.format("Too many arguments. Asked for %d dimensions, Channel only has %d dimensions\n",
@@ -146,6 +173,7 @@ public class Channel {
 			index += (indices[i] * dimProducts[i]);
 		}
 		
+		// Throw an exception if the calculated index is too high for the number of tuples
 		if (index >= numTuples * tupleSize) 
 		{
 			String message = String.format("Data index too high. Asked for index %d, max index %d\n",

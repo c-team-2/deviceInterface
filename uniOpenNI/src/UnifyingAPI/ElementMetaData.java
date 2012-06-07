@@ -19,51 +19,55 @@ public class ElementMetaData {
 		int sizeInBits = descriptor.getSize() << (descriptor.isSizedInBytes()?3:0);
 		int sizeInBytes = (sizeInBits >> 3) + (((sizeInBits & 7) == 0)?0:1);
 		
-		this.size = sizeInBytes;
+		int packedSize = sizeInBytes;
 		
-		// TODO: decide whether to handle unsigned
+		// Set the UniType and size of the element
 		if (descriptor.isInteger()) 
 		{
-			switch(sizeInBytes) 
+			switch(packedSize) 
 			{
 			case 1:
 				this.type = UniType.int8;
+				this.size = 1;
 				break;
 			case 2:
 				this.type = UniType.int16;
+				this.size = 2;
 				break;
 			case 3:
 			case 4:
 				this.type = UniType.int32;
+				this.size = 4;
 				break;
 			case 5:
 			case 6:
 			case 7:
 			case 8:
 				this.type = UniType.int64;
+				this.size = 8;
 				break;
 			default:
 				this.type = UniType.int_nonprimitive;
+				this.size = packedSize;
 			}
 		}
 		else
 		{
 			switch(sizeInBytes)
 			{
-			case 1:
-			case 2:
-			case 3:
 			case 4:
 				this.type = UniType.float32;
+				this.size = 4;
 				break;
-			case 5:
-			case 6:
-			case 7:
+
 			case 8:
 				this.type = UniType.float64;
+				this.size = 8;
 				break;
 			default:
+				// Return nonprimitive if not a float or double
 				this.type = UniType.float_nonprimitive;
+				this.size = packedSize;
 			}
 		}
 		
@@ -71,10 +75,25 @@ public class ElementMetaData {
 	}
 	
 	private UniType type;		// Type of element
-	private int size;			// Size of element in bytes
+	private int size;			// Size of element in bytes after parsing
 	private int bufferIndex;	// index in ByteBuffer in bytes of this element relative to beginning of tuple
 	
+	/**
+	 * Retrieves the <code>UniType</code> of the element.
+	 * @return the <code>UniType</code> of the element
+	 */
 	public UniType getType() { return type; }
+	
+	/**
+	 * Retrieves the size of the element in bytes
+	 * @return the size of the element in bytes.
+	 */
 	public int getSize() { return size; }
+	
+	/**
+	 * Retrieves the 0-based byte index of the element in a <code>Tuple</code>'s 
+	 * data buffer.
+	 * @return the index of the element in a <code>Tuple</code>.
+	 */
 	public int getBufferIndex() { return bufferIndex; }
 }

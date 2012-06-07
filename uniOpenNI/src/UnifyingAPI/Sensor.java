@@ -49,9 +49,6 @@ public class Sensor {
 		UniSensorHeader sensorHeader = new UniSensorHeader(rawPacket); 
 		SensorSnapshot snapshot = new SensorSnapshot(this, sensorHeader);
 		
-		// Parse sensor packet into Channels and add to SensorSnapshot
-		int numChannels = sensorHeader.getNumChannels();
-		
 		// Decrypt the raw packet
 		ByteBuffer sensorPacket;
 		if (decryptor != null)
@@ -61,6 +58,9 @@ public class Sensor {
 		}
 		else
 			sensorPacket = rawPacket;
+		
+		// Parse sensor packet into Channels and add to SensorSnapshot
+		int numChannels = sensorHeader.getNumChannels();
 		
 		int readBytes = sensorHeader.getPackedSize(); // number of bytes read so far
 		for (int channelCount = 0; channelCount < numChannels; ++channelCount)

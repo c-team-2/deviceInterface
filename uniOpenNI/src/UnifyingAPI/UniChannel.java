@@ -72,19 +72,21 @@ public class UniChannel {
 	public long getPackedDataSize()
 	{
 		// Construct size (in bits) of a tuple
-		// TODO: assumes that tuples and channels are byte-aligned, not necessarily elements
+		// assumes that elements are byte aligned
 		UniElementDescriptor descriptors[] = header.getElementDescriptors();
-		long tupleSizeInBits = 0;
+		long tupleSize = 0;	// Sized in bytes
 		for (int i = 0; i < descriptors.length; ++i) 
 		{
 			int elementSizeInBits = descriptors[i].getSize() * (1 << (descriptors[i].isSizedInBytes()?3:0));
-			tupleSizeInBits += elementSizeInBits;
+			int elementSizeInBytes = elementSizeInBits >> 3;
+			
+			// Add a byte if doesn't end on byte boundary
+			elementSizeInBytes += ((elementSizeInBits % 8) > 0 ? 1 : 0);
+			tupleSize+= elementSizeInBytes;
 		}
 		
 		// Construct buffer size (in bytes)
-		long dataSizeInBits = tupleSizeInBits * header.getNumberTuples();
-		long dataSize = dataSizeInBits >> 3;
-		dataSize += ((dataSizeInBits & 7) > 0 ? 1 : 0); // Add an extra byte if data doesn't end on byte boundary
+		long dataSize = tupleSize * header.getNumberTuples();
 		
 		return dataSize;
 	}

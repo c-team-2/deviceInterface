@@ -12,7 +12,7 @@ public class Tuple {
 	private ElementMetaData[] elementMetaData;
 	
 	/**
-	 * 
+	 * Construct a Tuple from a data buffer and an array of element metadata objects
 	 * @param data a ByteBuffer containing the <code>Tuple</code>'s data
 	 * @param elementMetaData an array of element metadata objects, in the order 
 	 * which the elements appear in the data buffer
