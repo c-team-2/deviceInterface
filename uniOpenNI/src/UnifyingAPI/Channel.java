@@ -50,7 +50,7 @@ public class Channel {
 	public double getFrequency() { return frequency; }
 	
 	/**
-	 * Retrievs the name of the channel.
+	 * Retrieves the name of the channel.
 	 * @return the name of the channel.
 	 */
 	public String getName() { return name; }
@@ -90,6 +90,16 @@ public class Channel {
 		// Parse data
 		// assuming given sensor packet is byte aligned per element
 		// need to convert 3, 5, 6, and 7 byte integers into primitives
+		
+		// Create null byte arrays
+		byte[][] nullBytes = new byte[elementMetaData.length][];
+		for (int i = 0; i < elementMetaData.length; ++i)
+		{
+			int packedSize = descriptors[i].getSize();
+			int numNullBytes = elementMetaData[i].getSize() - packedSize;
+			nullBytes[i] = new byte[numNullBytes];
+		}
+		
 		this.data = ByteBuffer.allocate((int) (tupleSize * numTuples));
 		int bytesRead = 0;
 		int bytesWritten = 0;
@@ -106,10 +116,8 @@ public class Channel {
 				int packedSize = descriptors[elementCount].getSize();
 				element.limit(packedSize);
 				
-				// Write null bytes to highest order bytes if necessary
-				int numNullBytes = elementMetaData[elementCount].getSize() - packedSize;
-				ByteBuffer nullBytes = ByteBuffer.allocate(numNullBytes);
-				this.data.put(nullBytes);
+				// Write null bytes to highest order bytes
+				this.data.put(nullBytes[elementCount]);
 				
 				// Write element to parsed data buffer
 				this.data.put(element);
