@@ -19,7 +19,7 @@ public class UniOpenNIDevice extends UniDevice {
 		String depthName = "Depth";
 		double depthFrequency = (double) depthMD.getFPS();
 		UniElementDescriptor[] depthDescriptors = new UniElementDescriptor[1];
-		depthDescriptors[0] = new UniElementDescriptor(true, true, true, (byte) depth.getBytesPerPixel());
+		depthDescriptors[0] = new UniElementDescriptor(true, true, (byte) depth.getBytesPerPixel());
 		long depthNumTuples = depth.getXRes() * depth.getYRes();
 
 		UniChannelHeader depthHeader = new UniChannelHeader(depthNumTuples, depthFrequency, depthDescriptors, depthName);
@@ -46,10 +46,10 @@ public class UniOpenNIDevice extends UniDevice {
 			String user1Name = "User1";
 			double user1Frequency = (double) sceneMD.getFPS();
 			UniElementDescriptor[] user1Descriptors = new UniElementDescriptor[4];
-			user1Descriptors[0] = new UniElementDescriptor(true, false, true, (byte) 4);
-			user1Descriptors[1] = new UniElementDescriptor(true, false, true, (byte) 4);
-			user1Descriptors[2] = new UniElementDescriptor(true, false, true, (byte) 4);
-			user1Descriptors[3] = new UniElementDescriptor(true, false, true, (byte) 4);
+			user1Descriptors[0] = new UniElementDescriptor(false, true, (byte) 4);
+			user1Descriptors[1] = new UniElementDescriptor(false, true, (byte) 4);
+			user1Descriptors[2] = new UniElementDescriptor(false, true, (byte) 4);
+			user1Descriptors[3] = new UniElementDescriptor(false, true, (byte) 4);
 			long user1NumTuples = 15;
 			
 			UniChannelHeader user1Header = new UniChannelHeader(user1NumTuples, user1Frequency, user1Descriptors, user1Name);
