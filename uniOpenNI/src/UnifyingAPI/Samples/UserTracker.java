@@ -114,7 +114,7 @@ public class UserTracker extends Component
 		Channel depthChannel = snapshot.getChannel("Depth");
 
 		calcHist(depthChannel);
-		
+
 		for (int i = 0; i < depthChannel.getNumberOfTuples(); ++i)
 		{
 		    short pixel;

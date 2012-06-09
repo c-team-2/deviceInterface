@@ -162,17 +162,19 @@ public class Channel {
 	{
 		int dimensionProducts[] = new int[args.length];
 		dimensionProducts[args.length-1] = this.tupleSize;
-		for (int i = args.length-2; i >= 0 ; ++i) {
+		for (int i = args.length-2; i >= 0 ; --i) {
 			dimensionProducts[i] = dimensionProducts[i+1] * args[i+1];
 		}
 		
 		// Check if final product of dimensions is equal to the number of Tuples in this channel
-		if (dimensionProducts[0] / tupleSize != this.numTuples)
+		if (dimensionProducts[0] * args[0] / this.tupleSize != this.numTuples)
 		{
 			throw new Exception("The given dimensions do not match the number of tuples");
 		}
 		else
 		{
+			this.dimensions = new int[args.length];
+			this.dimProducts = new int[args.length];
 			for (int i = 0; i < args.length; ++i)
 			{
 				this.dimensions[i] = args[i];
@@ -183,10 +185,11 @@ public class Channel {
 	
 	/** 
 	 * Get tuple using integer dimensions.
-	 * @param indices of tuple, 0-indexed. e.g. 639,479 for last pixel in a VGA image
+	 * @param indices of tuple, 0-indexed. e.g. 479, 639 for last pixel in a VGA image
 	 * @return the <code>Tuple</code>
 	 * @throws IllegalArgumentException if the dimensionality is higher than this
-	 *  <code>Channel</code>'s dimensionality or if the calculated index is too high
+	 *  <code>Channel</code>'s dimensionality or if the given index is too high 
+	 *  for the corresponding dimension
 	 */
 	public Tuple getTuple(int... indices) throws IllegalArgumentException {
 		// Throw an exception if too many arguments
@@ -201,15 +204,14 @@ public class Channel {
 		int index = 0;
 		for (int i = 0; i < indices.length; ++i)
 		{
+			// Throw an exception of the given index is out of bounds
+			if (indices[i] >= dimensions[i])
+			{
+				String message = String.format("Index for this dimension too high. Asked for index %d, max index %d\n",
+						index, dimensions[i]-1);
+				throw new IllegalArgumentException(message);
+			}
 			index += (indices[i] * dimProducts[i]);
-		}
-		
-		// Throw an exception if the calculated index is too high for the number of tuples
-		if (index >= numTuples * tupleSize) 
-		{
-			String message = String.format("Data index too high. Asked for index %d, max index %d\n",
-					index, (numTuples - 1) * tupleSize);
-			throw new IllegalArgumentException(message);
 		}
 		
 		// Create new ByteBuffer
