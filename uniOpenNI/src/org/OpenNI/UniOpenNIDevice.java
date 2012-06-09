@@ -1,3 +1,27 @@
+/**************************************************************
+ This file is part of Kinect Sensor Architecture Development Project.
+
+    Kinect Sensor Architecture Development Project is free software:
+	you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Kinect Sensor Architecture Development Project is distributed in
+	the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Kinect Sensor Architecture Development Project.  If
+	not, see <http://www.gnu.org/licenses/>.
+**************************************************************/
+/**************************************************************
+The work was done in joint collaboration with Cisco Systems Inc.
+Copyright © 2012, Cisco Systems, Inc. and UCLA
+*************************************************************/
+
 package org.OpenNI;
 import UnifyingAPI.*;
 
@@ -96,7 +120,6 @@ public class UniOpenNIDevice extends UniDevice {
 			height = depthMD.getFullYRes();
 			
 			userGen = UserGenerator.create(context);
-			sceneMD = userGen.getUserPixels(0);
 			skeletonCap = userGen.getSkeletonCapability();
 			poseDetectionCap = userGen.getPoseDetectionCapability();
 			
@@ -186,7 +209,6 @@ public class UniOpenNIDevice extends UniDevice {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args)
 		{
-			System.out.println("New user " + args.getId());
 			try
 			{
 				if (skeletonCap.needPoseForCalibration())
@@ -209,7 +231,6 @@ public class UniOpenNIDevice extends UniDevice {
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args)
 		{
-			System.out.println("Lost user " + args.getId());
 			joints.remove(args.getId());
 		}
 	}
@@ -220,12 +241,10 @@ public class UniOpenNIDevice extends UniDevice {
 		public void update(IObservable<CalibrationProgressEventArgs> observable,
 				CalibrationProgressEventArgs args)
 		{
-			System.out.println("Calibration complete: " + args.getStatus());
 			try
 			{
 			if (args.getStatus() == CalibrationProgressStatus.OK)
 			{
-				System.out.println("starting tracking "  +args.getUser());
 					skeletonCap.startTracking(args.getUser());
 	                joints.put(new Integer(args.getUser()), new HashMap<SkeletonJoint, SkeletonJointPosition>());
 			}
@@ -252,7 +271,6 @@ public class UniOpenNIDevice extends UniDevice {
 		public void update(IObservable<PoseDetectionEventArgs> observable,
 				PoseDetectionEventArgs args)
 		{
-			System.out.println("Pose " + args.getPose() + " detected for " + args.getUser());
 			try
 			{
 				poseDetectionCap.stopPoseDetection(args.getUser());
