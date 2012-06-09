@@ -51,7 +51,7 @@ public abstract class UniDevice {
 	}
 	
 	/**
-	 * Constructs and returns a new sensor packet as a ByteBuffer.
+	 * Constructs and returns a new sensor packet as a ,<code>ByteBuffer</code>.
 	 * @return the sensor packet
 	 */
 	public final ByteBuffer getSensorPacket()

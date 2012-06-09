@@ -156,7 +156,6 @@ public class Channel {
 	/**
 	 * Sets the dimensions of the channel. Returns true if properly set
 	 * @param args the new dimensions to set. The final dimension should be the one closest together in memory
-	 * @return true if and only if product of args is equal to this channel's number of Tuples
 	 * @throws Exception if the product of the given dimensions does not equal the number of tuples in the channel
 	 */
 	public void setDimensions(int... args) throws Exception
