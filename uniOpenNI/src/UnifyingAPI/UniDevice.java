@@ -51,10 +51,10 @@ public abstract class UniDevice {
 	}
 	
 	/**
-	 * Constructs and returns a new sensor packet as a byte array.
+	 * Constructs and returns a new sensor packet as a ByteBuffer.
 	 * @return the sensor packet
 	 */
-	public final byte[] getSensorPacket()
+	public final ByteBuffer getSensorPacket()
 	{
 		// Create a new channels list
 		channels = new LinkedList<UniChannel>();
@@ -95,11 +95,8 @@ public abstract class UniDevice {
 		// Encrypt the buffer
 		buffer.rewind();
 		ByteBuffer encryptedBuffer = encryptor.encrypt(encryptionFlags, buffer);
-		
-		// Create and return the byte array
-		byte[] sensorPacket = new byte[encryptedBuffer.capacity()];
-		encryptedBuffer.get(sensorPacket);
-		return sensorPacket;
+
+		return encryptedBuffer;
 	}
 	
 	/**

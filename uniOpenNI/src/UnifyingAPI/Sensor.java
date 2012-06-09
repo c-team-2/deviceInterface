@@ -66,7 +66,7 @@ public class Sensor {
 	public SensorSnapshot getSensorSnapshot()
 	{
 		// Get sensor packet from device driver
-		ByteBuffer rawPacket = ByteBuffer.wrap(device.getSensorPacket()).asReadOnlyBuffer();
+		ByteBuffer rawPacket = device.getSensorPacket().asReadOnlyBuffer();
 		rawPacket.rewind();
 		
 		// Create new SensorSnapshot
