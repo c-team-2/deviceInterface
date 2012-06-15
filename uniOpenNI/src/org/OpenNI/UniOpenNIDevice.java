@@ -83,7 +83,7 @@ public class UniOpenNIDevice extends UniDevice {
 			}
 		};
 		
-		// Create and add depth channel
+		// Create and add RGB channel
 		UniChannel RGBChannel = new UniChannel(RGBHeader, RGBDataPacker);
 		addChannel(RGBChannel);
 		
