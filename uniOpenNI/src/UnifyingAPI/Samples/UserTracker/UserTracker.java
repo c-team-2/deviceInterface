@@ -123,7 +123,7 @@ public class UserTracker extends Component
 				
 				imgbytes[3*i] = 0;
 				imgbytes[3*i+1] = 0;
-				imgbytes[3*i] = 0;                	
+				imgbytes[3*i+2] = 0;                	
 
 			    if (drawBackground || pixel != 0)
 			    {

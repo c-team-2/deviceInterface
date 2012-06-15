@@ -62,6 +62,31 @@ public class UniOpenNIDevice extends UniDevice {
 		UniChannel depthChannel = new UniChannel(depthHeader, depthDataPacker);
 		addChannel(depthChannel);
 		
+		// Create RGB channel header
+		String RGBName = "RGB";
+		double RGBFrequency = (double) imageMD.getFPS();
+		UniElementDescriptor[] RGBDescriptors = new UniElementDescriptor[3];
+		RGBDescriptors[0] = new UniElementDescriptor(true, true, (byte) 1);
+		RGBDescriptors[1] = new UniElementDescriptor(true, true, (byte) 1);
+		RGBDescriptors[2] = new UniElementDescriptor(true, true, (byte) 1);
+		long RGBNumTuples = image.getXRes() * image.getYRes();
+		
+		UniChannelHeader RGBHeader = new UniChannelHeader(RGBNumTuples, RGBFrequency, RGBDescriptors, RGBName);
+		
+		// Create RGB data packer
+		UniDataPacker RGBDataPacker = new UniDataPacker()
+		{
+			public void writeDataIntoByteBuffer(ByteBuffer buffer)
+			{
+				ByteBuffer RGBBuffer = image.createByteBuffer();
+				buffer.put(RGBBuffer);
+			}
+		};
+		
+		// Create and add depth channel
+		UniChannel RGBChannel = new UniChannel(RGBHeader, RGBDataPacker);
+		addChannel(RGBChannel);
+		
 		// Check if User1 is actually tracking
 		HashMap<SkeletonJoint, SkeletonJointPosition> user1Skeleton = joints.get(1);
 		if (user1Skeleton != null)
@@ -114,7 +139,10 @@ public class UniOpenNIDevice extends UniDevice {
 			context = Context.createFromXmlFile(SAMPLE_XML_FILE, scriptNode);
 			
 			depthGen = DepthGenerator.create(context);
-			DepthMetaData depthMD = depthGen.getMetaData();
+			depthMD = depthGen.getMetaData();
+			
+			imageGen = ImageGenerator.create(context);
+			imageMD = imageGen.getMetaData();
 			
 			width = depthMD.getFullXRes();
 			height = depthMD.getFullYRes();
@@ -144,10 +172,12 @@ public class UniOpenNIDevice extends UniDevice {
 		context.waitAnyUpdateAll();
 
         depthMD = depthGen.getMetaData();
+        imageMD = imageGen.getMetaData();
         sceneMD = userGen.getUserPixels(0);
 
         scene = sceneMD.getData();
         depth = depthMD.getData();
+        image = imageMD.getData();
 		
 		numUsers = userGen.getNumberOfUsers();
 		users = userGen.getUsers();
@@ -286,6 +316,7 @@ public class UniOpenNIDevice extends UniDevice {
     private Context context;
     private DepthGenerator depthGen;
     private UserGenerator userGen;
+    private ImageGenerator imageGen;
     private SkeletonCapability skeletonCap;
     private PoseDetectionCapability poseDetectionCap;
     String calibPose = null;
@@ -294,8 +325,10 @@ public class UniOpenNIDevice extends UniDevice {
     // Not everything, look at the get() functions from userGen, depthGen, depthGen.getMetaData(), etc
     int width, height;
     DepthMap depth;
+    ImageMap image;
     DepthMetaData depthMD;
     SceneMetaData sceneMD;
+    ImageMetaData imageMD;
     
     SceneMap scene;	//mask for which pixels are associated to a user?
     int numUsers;

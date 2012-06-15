@@ -42,10 +42,7 @@ public class RGBUserTracker extends Component
 	 */
 	private static final long serialVersionUID = 1L;
    private byte[] imgbytes;
-   private float histogram[];
    HashMap<Integer, HashMap<Integer, float[]>> joints;
-
-   private boolean drawBackground = true;
    private boolean drawPixels = true;
    private boolean drawSkeleton = true;
    
@@ -62,79 +59,25 @@ public class RGBUserTracker extends Component
        joints = new HashMap<Integer, HashMap<Integer, float[]>>();
    }
    
-   private void calcHist(Channel depth)
-   {
-       // reset
-       for (int i = 0; i < histogram.length; ++i)
-           histogram[i] = 0;
-
-       int points = 0;
-       int depthIterator = 0;
-       while(depthIterator < depth.getNumberOfTuples())
-       {
-           short depthVal;
-			try {
-				depthVal = depth.getTuple(depthIterator++).getElementShort(0);
-				
-				if (depthVal != 0)
-	            {
-	                histogram[depthVal]++;
-	                points++;
-	            }
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-           
-       }
-       
-       for (int i = 1; i < histogram.length; i++)
-       {
-           histogram[i] += histogram[i-1];
-       }
-
-       if (points > 0)
-       {
-           for (int i = 1; i < histogram.length; i++)
-           {
-               histogram[i] = 1.0f - (histogram[i] / (float)points);
-           }
-       }
-   }
-
-
-   void updateDepth()
+   void updateRGB()
    {
        snapshot = kinect.getSensorSnapshot();
 		
-		Channel depthChannel = snapshot.getChannel("Depth");
+		Channel RGBChannel = snapshot.getChannel("RGB");
 
-		calcHist(depthChannel);
-
-		for (int i = 0; i < depthChannel.getNumberOfTuples(); ++i)
+		for (int i = 0; i < RGBChannel.getNumberOfTuples(); ++i)
 		{
-		    short pixel;
+		    byte red;
+		    byte green;
+		    byte blue;
 			try {
-				pixel = depthChannel.getTuple(i).getElementShort(0);
+				red = RGBChannel.getTuple(i).getElementByte(0);
+				green = RGBChannel.getTuple(i).getElementByte(1);
+				blue = RGBChannel.getTuple(i).getElementByte(2);
 				
-				imgbytes[3*i] = 0;
-				imgbytes[3*i+1] = 0;
-				imgbytes[3*i] = 0;                	
-
-			    if (drawBackground || pixel != 0)
-			    {
-			    	int colorID = colors.length-1;
-			    	if (pixel != 0)
-			    	{
-			    		float histValue = histogram[pixel];
-			    		imgbytes[3*i] = (byte)(histValue*colors[colorID].getRed());
-			    		imgbytes[3*i+1] = (byte)(histValue*colors[colorID].getGreen());
-			    		imgbytes[3*i+2] = (byte)(histValue*colors[colorID].getBlue());
-			    	}
-			    }
+				imgbytes[3*i] = red;
+				imgbytes[3*i+1] = green;
+				imgbytes[3*i+2] = blue;
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

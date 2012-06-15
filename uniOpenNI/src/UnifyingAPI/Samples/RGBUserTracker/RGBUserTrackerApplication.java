@@ -81,7 +81,7 @@ public class RGBUserTrackerApplication {
    void run()
    {
        while(shouldRun) {
-           viewer.updateDepth();
+           viewer.updateRGB();
            viewer.repaint();
        }
        frame.dispose();
