@@ -25,7 +25,7 @@ Copyright © 2012, Cisco Systems, Inc. and UCLA
  * Contains code from OpenNI Copyright (C) 2011 PrimeSense Ltd.  
  ************************************************************/
 
-package UnifyingAPI.Samples;
+package UnifyingAPI.Samples.UserTracker;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
